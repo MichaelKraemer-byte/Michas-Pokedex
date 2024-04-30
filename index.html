@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="icon" type="image/x-icon" href="img/ball.png">
+    <title>Pokedex</title>
+</head>
+<body onload="includeHTML(); getData();">
+    
+    <div w3-include-html="./templates/header.html">
+    </div>
+
+    <div id="content" class="pokedexContainer">
+        <div id="loadingCircle" class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    
+    <div w3-include-html="./templates/footer.html">
+    </div>
+</body>
+</html>

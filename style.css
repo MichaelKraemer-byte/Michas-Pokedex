@@ -1,0 +1,219 @@
+.pokedexContainer {
+    padding: 32px 40px 32px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(40,42,53);
+    height: 100%;
+    min-height: 80vh;
+}
+
+.card {
+    width: 280px;
+    height: 416px !important;
+    border: 16px solid rgb(255,204,1) !important;
+    padding: 8px !important;
+    box-sizing: border-box !important; 
+    color: white;
+}
+
+.yellow{
+    background-color: rgb(255,204,1) !important;
+}
+
+.headerLogo {
+    height: 80px;
+}
+
+.navbar {
+    --bs-navbar-padding-y: 0rem !important;
+}
+
+.searchImg {
+    height: 32px;
+}
+
+.searchButton, .yellowButton {
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: rgb(255,204,1);
+    border: 1.4px solid rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+.searchButton:hover {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+
+.baseInfoContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.type {
+
+    background-color: rgba(0, 0, 0, 0.221);
+    border-radius: 4px;
+    padding: 4px;
+    gap: 4px;
+    display: flex;
+}
+
+.baseImg {
+    height: 140px;
+    margin: 8px 0px 8px 0px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+    border: 2px solid rgb(203, 203, 203);
+}
+
+.card h3 {
+    margin: 0px;
+    font-size: 20px;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.soundButton {
+    border: 0px;
+    background-color: rgb(255, 220, 81);
+    border-radius: 4px;
+}
+
+.soundButton:hover, .yellowButton:hover  {
+    background-color: rgb(255, 235, 153);
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+}
+
+.soundButton:active, .yellowButton:active {
+    background-color: rgb(255, 220, 81);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.soundPNG {
+    width: 24px;
+}
+
+.grass {
+    background-color: rgba(88, 168, 88, 0.721) !important;
+}
+
+.whiteLetters {
+    color: white !important;
+}
+
+.bug {
+    background-color: #A8B820 !important; /* Hellgrün */
+}
+
+.fire {
+    background-color: #F08030 !important; /* Orange */
+}
+
+.water {
+    background-color: #6890F0 !important; /* Blau */
+}
+
+.electric {
+    background-color: #F8D030 !important; /* Gelb */
+}
+
+.normal {
+    background-color: #cdcdb5 !important; /* Normal */
+}
+
+.psychic {
+    background-color: #F85888 !important; /* Pink */
+}
+
+.flying {
+    background-color: #A890F0 !important; /* Violett */
+}
+
+.poison {
+    background-color: #A040A0 !important; /* Lila */
+}
+
+.ground {
+    background-color: #E0C068 !important; /* Braun */
+}
+
+.rock {
+    background-color: #B8A038 !important; /* Graubraun */
+}
+
+.electric {
+    background-color: #F8D030 !important; /* Gelb */
+}
+
+.fighting {
+    background-color: #C03028 !important; /* Rot */
+}
+
+.ice {
+    background-color: #98D8D8 !important; /* Hellblau */
+}
+
+.steel {
+    background-color: #B8B8D0 !important; /* Grau */
+}
+
+.dark {
+    background-color: #705848 !important; /* Dunkelbraun */
+}
+
+.dragon {
+    background-color: #7038F8 !important; /* Indigo */
+}
+
+.ghost {
+    background-color: #705898 !important; /* Violett */
+}
+
+.descriptionContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    margin-top: 8px;
+}
+
+p {
+    margin-bottom: 8px !important;
+}
+
+h2 {
+    margin: 0px !important;
+}
+
+.card h2, .card h3 {
+    font-weight: bold;
+}
+
+.fairy {
+    background-color: #EE99AC !important; 
+}
+
+.footerContainer {
+    background-color: rgb(255,204,1);
+    height: 120px;
+    padding: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footerLink, .footerWords {
+    color: rgb(40,42,53);
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.footerLink:hover {
+    color: rgb(255, 255, 255);
+}
+

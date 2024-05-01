@@ -28,6 +28,8 @@ function includeHTML() {
 
 
 let pokeAmount = "20";
+let offset = "0";
+let index = 0;
 let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
 
 const colorClasses = ['grass', 'bug', 'fire', 'water', 'electric', 'normal', 'psychic', 'flying', 'poison', 'ground', 'rock', 'electric', 'fighting', 'ice', 'steel', 'dark', 'dragon', 'ghost', 'fairy'];
@@ -57,9 +59,10 @@ const pokemonColors = [
 let allPokemon = [];
 
 async function getData() {
+    document.getElementById('moreButton').style.display='none';
     BASE_Response = await fetch(BASE_URL + `?limit=${pokeAmount}&offset=0`);
     BASE_ResponseToJson = await BASE_Response.json();
-    allPokemon = BASE_ResponseToJson['results'].map(resutls => resutls.name);
+    allPokemon = BASE_ResponseToJson['results'].map(results => results.name);
     renderPokemon(BASE_ResponseToJson);
 }
 
@@ -74,7 +77,7 @@ async function renderPokemon(BASE_ResponseToJson) {
         let POKE_ResponseToJson = await POKE_Response.json();
 
         let abilities = POKE_ResponseToJson['abilities'].map(ability => ability.ability.name);
-                 // .map() erstellt ein neues array. // dieses array wird als Variabel "abilities" defineirt.
+        // .map() erstellt ein neues array. // dieses array wird als Variabel "abilities" defineirt.
          // .map() ist eine einfache moeglichkeit mit einer arrowfunction durch ein array zu iterieren.
          // Hierbei wird abilities = [Faehigkeitsname1, Faehigkeitsname2, Faehigkeitsname3 ...] bis es keine Faehigkeiten mehr gibt, 
          // aus "POKE_ResponseToJson['abilities']". 
@@ -100,14 +103,14 @@ async function renderPokemon(BASE_ResponseToJson) {
             <div class="descriptionContainer">
                 <h3 class="whiteLetters">Abilities:</h3>
                 <div class="baseInfoContainer whiteLetters">
-                    ${abilities.map(ability => `<div class="width-50-percent"><i class="type capitalize">${ability}</i></div>`).join('')}
+                    ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
                     <!-- Hier passiert wieder mit map folgendes: Wir wandeln die Werte in dem array abilites in <p></p> Elemente um, 
                     Dann wandeln wir das Array mit diesen <p>-Elementen in einen einzelnen String um - mit .join(''). 
                     (In die Klammern von join koennten wir noch weitere Elemente einfuegen, wenn wir wollten...) -->
                 </div>
                 <h3 class="whiteLetters">Types:</h3>
                 <div class="baseInfoContainer whiteLetters">
-                    ${types.map(type => `<div class="width-50-percent"><i class="type capitalize">${type}</i></div>`).join('')}
+                    ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
                 </div>
                 <div class="baseInfoContainer whiteLetters">
                     <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
@@ -122,23 +125,69 @@ async function renderPokemon(BASE_ResponseToJson) {
     // zum Schluss fuegen wir das grosse aufgebaute Fragment zum DOM-Baum hinzu:
     content.appendChild(fragment); 
     applyColors();
-    renderMoreButton();
+    document.getElementById('moreButton').style.display='block';
 }
 
-function morePokemon() {
-    let pokeAmount = parseFloat(pokeAmount);
-    pokeAmount + 20;
-    console.log(pokeAmount);
+async function morePokemon() {
+    document.getElementById('moreButton').style.display = 'none';
+    document.getElementById('loadingCircle').style.display = 'block';
+
+    pokeAmount = Number(pokeAmount);
+    pokeAmount += 20; // Erhöhe die Anzahl der anzuzeigenden Pokemon
+
+    // Neue Pokemon-Daten abrufen
+    const newPokemonResponse = await fetch(`${BASE_URL}?limit=20&offset=${allPokemon.length}`);
+    const newPokemonData = await newPokemonResponse.json();
+    const newPokemonNames = newPokemonData.results.map(pokemon => pokemon.name);
+
+    // Neue Pokemon-Daten zur Liste aller Pokemon hinzufügen
+    allPokemon.push(...newPokemonNames);
+
+    // Neue Pokemon anzeigen
+    renderNewPokemon(newPokemonNames);
 }
 
-function renderMoreButton(){
-    let moreButton = document.createElement('div');
-    moreButton.innerHTML = /*html*/`
-        <div>
-            <button class="yellowButton" onclick="morePokemon()">See more Pokemon</button>
-        </div>
-    `;
-    content.appendChild(moreButton);
+async function renderNewPokemon(pokemonNames) {
+    let content = document.getElementById('content');
+    let fragment = document.createDocumentFragment();
+
+    // Daten für jedes neue Pokemon abrufen und anzeigen
+    for (let i = 0; i < pokemonNames.length; i++) {
+        const pokemonId = allPokemon.length - pokemonNames.length + i + 1; // Basis auf der Anzahl der bereits vorhandenen Pokémon
+        const pokemonResponse = await fetch(`${BASE_URL}/${pokemonId}`);
+        const pokemonData = await pokemonResponse.json();
+
+        let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
+        let types = pokemonData['types'].map(type => type.type.name);
+        let cries = pokemonData['cries']['latest'];
+
+        let pokemonCard = document.createElement('div');
+        pokemonCard.className = 'card';
+        pokemonCard.id = pokemonNames[i];
+        pokemonCard.innerHTML = /*html*/`
+            <h2 class="capitalize whiteLetters">${pokemonNames[i]}</h2>
+            <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="">
+            <div class="descriptionContainer">
+                <h3 class="whiteLetters">Abilities:</h3>
+                <div class="baseInfoContainer whiteLetters">
+                    ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+                </div>
+                <h3 class="whiteLetters">Types:</h3>
+                <div class="baseInfoContainer whiteLetters">
+                    ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
+                </div>
+                <div class="baseInfoContainer whiteLetters">
+                    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                </div>
+            </div>
+        `;
+        fragment.appendChild(pokemonCard); 
+    }
+
+    content.appendChild(fragment); 
+    applyColors();
+    document.getElementById('loadingCircle').style.display = 'none';
+    document.getElementById('moreButton').style.display='block';
 }
 
 function playSound(soundURL) {
@@ -175,8 +224,10 @@ function filterPokemon(){
             card.style.display = "flex"; // Pokémon gefunden, Karte anzeigen
         } else if (search.length >= 3) {
             card.style.display = "none"; // Pokémon nicht gefunden, Karte ausblenden
+            document.getElementById('moreButton').style.display="none";
         } if (search.length <= 2) {
             card.style.display = "flex";
+            document.getElementById('moreButton').style.display="block";
         }
     });
 }

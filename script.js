@@ -32,7 +32,9 @@ let offset = "0";
 let index = 0;
 let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
 
+
 const colorClasses = ['grass', 'bug', 'fire', 'water', 'electric', 'normal', 'psychic', 'flying', 'poison', 'ground', 'rock', 'electric', 'fighting', 'ice', 'steel', 'dark', 'dragon', 'ghost', 'fairy'];
+
 
 const pokemonColors = [
     ['grass', 'grass'],
@@ -56,7 +58,9 @@ const pokemonColors = [
     ['fairy', 'fairy']
 ];
 
+
 let allPokemon = [];
+
 
 async function getData() {
     document.getElementById('moreButton').style.display='none';
@@ -65,6 +69,7 @@ async function getData() {
     allPokemon = BASE_ResponseToJson['results'].map(results => results.name);
     renderPokemon(BASE_ResponseToJson);
 }
+
 
 async function renderPokemon(BASE_ResponseToJson) {
     let content = document.getElementById('content');
@@ -128,6 +133,7 @@ async function renderPokemon(BASE_ResponseToJson) {
     document.getElementById('moreButton').style.display='block';
 }
 
+
 async function morePokemon() {
     document.getElementById('moreButton').style.display = 'none';
     document.getElementById('loadingCircle').style.display = 'block';
@@ -146,6 +152,7 @@ async function morePokemon() {
     // Neue Pokemon anzeigen
     renderNewPokemon(newPokemonNames);
 }
+
 
 async function renderNewPokemon(pokemonNames) {
     let content = document.getElementById('content');
@@ -190,10 +197,12 @@ async function renderNewPokemon(pokemonNames) {
     document.getElementById('moreButton').style.display='block';
 }
 
+
 function playSound(soundURL) {
     let AUDIO = new Audio(soundURL);
     AUDIO.play();
 }
+
 
 function applyColors() {
     let iElements = document.querySelectorAll('i');
@@ -201,6 +210,7 @@ function applyColors() {
         applyColor(iElements, type, color);
     });
 }
+
 
 function applyColor(iElements, type, color) {
     iElements.forEach(element => {
@@ -213,6 +223,7 @@ function applyColor(iElements, type, color) {
         }
     });
 }
+
 
 // function filterPokemon(){
 //     let search = document.getElementById('search').value.toLowerCase();
@@ -232,23 +243,32 @@ function applyColor(iElements, type, color) {
 //     });
 // }
 
+async function renderFirst20PokemonWhenEmptyInput(){
+    let search = document.getElementById('search').value.toLowerCase();
+    if (search == '') {
+    let BASE_Response = await fetch(BASE_URL + `?limit=${pokeAmount}&offset=0`);
+    let BASE_ResponseToJson = await BASE_Response.json();
+    renderPokemon(BASE_ResponseToJson)
+    }
+}
+
+
 // Die Filterfunktion
 async function filterPokemon(event) {
+    let search = document.getElementById('search').value.toLowerCase();
+    let content = document.getElementById('content');
+
     // Prüfen, ob die Taste Enter gedrückt wurde (keyCode 13)
     if (event && event.key !== 'Enter') {
         return;
     }
 
-    let searchInput = document.getElementById('search');
-    let content = document.getElementById('content');
-
     // Prüfen, ob die Elemente gefunden wurden
-    if (!searchInput || !content) {
+    if (!search || !content) {
         console.error('Element not found');
+        renderFirst20PokemonWhenEmptyInput();
         return;
     }
-
-    let search = searchInput.value.toLowerCase();
 
     // Nur die Suche ausführen, wenn der Suchbegriff mindestens drei Zeichen hat
     if (search.length < 3) {
@@ -257,9 +277,6 @@ async function filterPokemon(event) {
         searchInput.reportValidity();
         return;
     }
-
-    // Fehlermeldung ausblenden, wenn Suchbegriff gültig ist
-    searchInput.setCustomValidity('');
 
     // Abfrage für das aktuelle Suchergebnis
     const searchResponse = await fetch(`${BASE_URL}?limit=151&offset=0`);
@@ -311,29 +328,3 @@ async function filterPokemon(event) {
     applyColors();
     document.getElementById('moreButton').style.display='none';
 }
-
-// Event-Listener für das keyup-Ereignis hinzufügen, um die Enter-Taste abzufangen
-document.addEventListener('DOMContentLoaded', function() {
-    let searchInput = document.getElementById('search');
-    if (searchInput) {
-        searchInput.addEventListener('keyup', filterPokemon);
-    } else {
-        console.error('Search input not found');
-    }
-});
-
-// Event-Listener für das submit-Ereignis des Formulars hinzufügen
-document.addEventListener('DOMContentLoaded', function() {
-    let searchForm = document.getElementById('searchForm');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Standardverhalten des Formulars verhindern
-            filterPokemon(event); // Filterfunktion aufrufen
-        });
-    } else {
-        console.error('Search form not found');
-    }
-});
-
-// Event-Listener für das submit-Ereignis des Formulars hinzufügen
-document.getElementById('searchForm').addEventListener('submit', filterPokemon);

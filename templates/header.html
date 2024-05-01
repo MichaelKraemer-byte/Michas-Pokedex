@@ -2,8 +2,8 @@
     <div class="container-fluid yellow">
         <a href="index.html"><img class="headerLogo" src="img/Michas-Pokedex.png"></a>
         <form id="searchForm" class="d-flex" role="search" action="javascript:void(0);">
-            <input required id="search" oninput="renderFirst20PokemonWhenEmptyInput()" onkeypress="filterPokemon(enter); renderFirst20PokemonWhenEmptyInput();" class="form-control me-2 form-control" type="search" placeholder="Search" aria-label="Search">
-            <button onclick="filterPokemon()" class="searchButton" type="submit"><img class="searchImg" src="img/search-icon.png"></button>
+            <input required id="search" oninput="renderFirst20PokemonWhenEmptyInput()" onkeypress="filterPokemon(event);" class="form-control me-2 form-control" type="search" placeholder="Search" aria-label="Search">
+            <button class="searchButton" type="submit"><img onclick="filterPokemon()" class="searchImg" src="img/search-icon.png"></button>
         </form>
     </div>
 </nav>

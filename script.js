@@ -248,13 +248,21 @@ async function renderFirst20PokemonWhenEmptyInput(){
     if (search == '') {
     let BASE_Response = await fetch(BASE_URL + `?limit=${pokeAmount}&offset=0`);
     let BASE_ResponseToJson = await BASE_Response.json();
+    loadingCircle();
     renderPokemon(BASE_ResponseToJson)
     }
 }
 
 
+function loadingCircle() {
+    document.getElementById('loadingCircle').style.display='block';
+}
+
+
 // Die Filterfunktion
 async function filterPokemon(event) {
+    let inputField = document.getElementById('search');
+    inputField.setCustomValidity('');
     let search = document.getElementById('search').value.toLowerCase();
     let content = document.getElementById('content');
 
@@ -272,10 +280,15 @@ async function filterPokemon(event) {
 
     // Nur die Suche ausführen, wenn der Suchbegriff mindestens drei Zeichen hat
     if (search.length < 3) {
+        let inputField = document.getElementById('search');
         // Fehlermeldung anzeigen
-        searchInput.setCustomValidity('Search term must be at least 3 characters long');
-        searchInput.reportValidity();
+        inputField.setCustomValidity('Search term must be at least 3 characters long');
+        inputField.reportValidity();
         return;
+    } else {
+        // Die benutzerdefinierte Validität zurücksetzen, wenn der Suchbegriff gültig ist
+        let inputField = document.getElementById('search');
+        inputField.setCustomValidity('');
     }
 
     // Abfrage für das aktuelle Suchergebnis

@@ -1,9 +1,9 @@
 <nav class="navbar bg-body-tertiary yellow">
     <div class="container-fluid yellow">
         <img class="headerLogo" src="img/Michas-Pokedex.png">
-        <form class="d-flex" role="search" action="onsubmit">
-            <input required oninput="filterPokemon()" id="search" class="form-control me-2 form-control" type="search" placeholder="Search" aria-label="Search">
-            <button onclick="filterPokemon()" class="searchButton" type="submit"><img class="searchImg" src="img/search-icon.png"></button>
+        <form id="searchForm" class="d-flex" role="search" action="javascript:void(0);">
+            <input required id="search" class="form-control me-2 form-control" type="search" placeholder="Search" aria-label="Search">
+            <button class="searchButton" type="button" onclick="filterPokemon()"><img class="searchImg" src="img/search-icon.png"></button>
         </form>
     </div>
 </nav>

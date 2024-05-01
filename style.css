@@ -28,6 +28,12 @@
     color: white;
 }
 
+.card:hover {
+    transition: transform 0.075s ease-in-out;
+    transform: scale(1.06);
+    cursor: pointer;
+}
+
 .yellow{
     background-color: rgb(255,204,1) !important;
 }
@@ -251,4 +257,14 @@ h2 {
 
 .form-control:focus {
     box-shadow: none !important;
+}
+
+#shadowLayer {
+    background-color: rgb(0, 0, 0, 0.4);
+    height: 100%;
+    width: 100%; /* Hinzugefügt */
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
 }

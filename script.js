@@ -70,7 +70,7 @@ async function renderPokemon(BASE_ResponseToJson) {
     let content = document.getElementById('content');
     let pokemon = BASE_ResponseToJson['results'];
     let fragment = document.createDocumentFragment(); // Fragment wird hier erstellt und zu fragment definiert. Fragment ist quasi ein leeres Behaeltnis auf das so nach Definition mit einer Variabel zugegriffen werden kann.
-    
+    content.innerHTML = '';
 
     for (let pokeIndex = 1; pokeIndex <= parseFloat(pokeAmount); pokeIndex++) {
         POKE_Response = await fetch(BASE_URL + `/${pokeIndex}/`);
@@ -166,7 +166,7 @@ async function renderNewPokemon(pokemonNames) {
         pokemonCard.id = pokemonNames[i];
         pokemonCard.innerHTML = /*html*/`
             <h2 class="capitalize whiteLetters">${pokemonNames[i]}</h2>
-            <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="">
+            <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="${pokemonNames[i]}">
             <div class="descriptionContainer">
                 <h3 class="whiteLetters">Abilities:</h3>
                 <div class="baseInfoContainer whiteLetters">
@@ -214,20 +214,126 @@ function applyColor(iElements, type, color) {
     });
 }
 
-function filterPokemon(){
-    let search = document.getElementById('search').value.toLowerCase();
+// function filterPokemon(){
+//     let search = document.getElementById('search').value.toLowerCase();
 
-    let cards = document.querySelectorAll('.card'); // Alle Karten sammeln
+//     let cards = document.querySelectorAll('.card'); // Alle Karten sammeln
 
-    cards.forEach(card => {
-        if (search.length >= 3 && card.id.includes(search)) {
-            card.style.display = "flex"; // Pokémon gefunden, Karte anzeigen
-        } else if (search.length >= 3) {
-            card.style.display = "none"; // Pokémon nicht gefunden, Karte ausblenden
-            document.getElementById('moreButton').style.display="none";
-        } if (search.length <= 2 || !search) {
-            card.style.display = "flex";
-            document.getElementById('moreButton').style.display="block";
+//     cards.forEach(card => {
+//         if (search.length >= 3 && card.id.includes(search)) {
+//             card.style.display = "flex"; // Pokémon gefunden, Karte anzeigen
+//         } else if (search.length >= 3) {
+//             card.style.display = "none"; // Pokémon nicht gefunden, Karte ausblenden
+//             document.getElementById('moreButton').style.display="none";
+//         } if (search.length <= 2 || !search) {
+//             card.style.display = "flex";
+//             document.getElementById('moreButton').style.display="block";
+//         }
+//     });
+// }
+
+// Die Filterfunktion
+async function filterPokemon(event) {
+    // Prüfen, ob die Taste Enter gedrückt wurde (keyCode 13)
+    if (event && event.key !== 'Enter') {
+        return;
+    }
+
+    let searchInput = document.getElementById('search');
+    let content = document.getElementById('content');
+
+    // Prüfen, ob die Elemente gefunden wurden
+    if (!searchInput || !content) {
+        console.error('Element not found');
+        return;
+    }
+
+    let search = searchInput.value.toLowerCase();
+
+    // Nur die Suche ausführen, wenn der Suchbegriff mindestens drei Zeichen hat
+    if (search.length < 3) {
+        // Fehlermeldung anzeigen
+        searchInput.setCustomValidity('Search term must be at least 3 characters long');
+        searchInput.reportValidity();
+        return;
+    }
+
+    // Fehlermeldung ausblenden, wenn Suchbegriff gültig ist
+    searchInput.setCustomValidity('');
+
+    // Abfrage für das aktuelle Suchergebnis
+    const searchResponse = await fetch(`${BASE_URL}?limit=151&offset=0`);
+    const searchData = await searchResponse.json();
+    const allPokemonData = searchData.results.map(pokemon => pokemon.name);
+
+    // Filtern der Pokémon
+    let filteredPokemon = allPokemonData.filter(name => name.includes(search));
+
+    // Anzeigen der passenden Pokémon
+    let fragment = document.createDocumentFragment();
+    content.innerHTML = ''; // Lösche den aktuellen Inhalt, um die neuen Pokémon anzuzeigen
+
+    for (let name of filteredPokemon) {
+        // Prüfen, ob das Pokémon bereits gerendert wurde
+        if (!document.getElementById(name)) {
+            const pokemonResponse = await fetch(`${BASE_URL}/${name}/`);
+            const pokemonData = await pokemonResponse.json();
+
+            let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
+            let types = pokemonData['types'].map(type => type.type.name);
+            let cries = pokemonData['cries']['latest'];
+
+            let pokemonCard = document.createElement('div');
+            pokemonCard.className = 'card';
+            pokemonCard.id = name;
+            pokemonCard.innerHTML = /*html*/`
+                <h2 class="capitalize whiteLetters">${name}</h2>
+                <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="">
+                <div class="descriptionContainer">
+                    <h3 class="whiteLetters">Abilities:</h3>
+                    <div class="baseInfoContainer whiteLetters">
+                        ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+                    </div>
+                    <h3 class="whiteLetters">Types:</h3>
+                    <div class="baseInfoContainer whiteLetters">
+                        ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
+                    </div>
+                    <div class="baseInfoContainer whiteLetters">
+                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                    </div>
+                </div>
+            `;
+            fragment.appendChild(pokemonCard);
         }
-    });
+    }
+
+    content.appendChild(fragment);
+    applyColors();
+    document.getElementById('moreButton').style.display='none';
 }
+
+// Event-Listener für das keyup-Ereignis hinzufügen, um die Enter-Taste abzufangen
+document.addEventListener('DOMContentLoaded', function() {
+    let searchInput = document.getElementById('search');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', filterPokemon);
+    } else {
+        console.error('Search input not found');
+    }
+});
+
+// Event-Listener für das submit-Ereignis des Formulars hinzufügen
+document.addEventListener('DOMContentLoaded', function() {
+    let searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Standardverhalten des Formulars verhindern
+            filterPokemon(event); // Filterfunktion aufrufen
+        });
+    } else {
+        console.error('Search form not found');
+    }
+});
+
+// Event-Listener für das submit-Ereignis des Formulars hinzufügen
+document.getElementById('searchForm').addEventListener('submit', filterPokemon);

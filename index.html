@@ -10,7 +10,7 @@
     <title>Pokedex</title>
 </head>
 <body onload="includeHTML(); getData();">
-    
+
     <div w3-include-html="./templates/header.html">
     </div>
 
@@ -26,8 +26,12 @@
     <div class="yellowButtonContainer">
         <button id="moreButton" class="yellowButton" onclick="morePokemon()">See more Pokemon</button>
     </div>
-    
+        
     <div w3-include-html="./templates/footer.html">
     </div>
+        
+    <div id="shadowLayer" class="d-none">
+    </div>
+
 </body>
 </html>

@@ -40,6 +40,7 @@
     --bs-navbar-padding-y: 0rem !important;
 }
 
+
 .searchImg {
     height: 32px;
 }
@@ -246,3 +247,8 @@ h2 {
 /* CSS TOOLS */
 /* CSS TOOLS */
 /* CSS TOOLS */
+
+
+.form-control:focus {
+    box-shadow: none !important;
+}

@@ -225,7 +225,7 @@ function filterPokemon(){
         } else if (search.length >= 3) {
             card.style.display = "none"; // Pokémon nicht gefunden, Karte ausblenden
             document.getElementById('moreButton').style.display="none";
-        } if (search.length <= 2) {
+        } if (search.length <= 2 || !search) {
             card.style.display = "flex";
             document.getElementById('moreButton').style.display="block";
         }

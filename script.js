@@ -97,11 +97,15 @@ async function renderPokemon(BASE_ResponseToJson) {
          // auf dieses 'name' greifen wir also mit .map immer wieder zu, und fuegen es unserem neuen Array abilities zu, bis es kein weiteres element name mehr gibt, dass wir hinzufuegen koennen.
         let types = POKE_ResponseToJson['types'].map(type => type.type.name);
         let cries = POKE_ResponseToJson['cries']['latest'];
+        let pokeWeight = POKE_ResponseToJson['weight'] / 10;
 
         // Einzelnes HTML-Element erstellen
         let pokemonCard = document.createElement('div');
         pokemonCard.className = 'card';
         pokemonCard.id = pokemon[pokeIndex - 1]['name'];
+        pokemonCard.onclick = function() {
+            showPokemon(pokemon[pokeIndex - 1]['name'], POKE_ResponseToJson);
+        };
         pokemonCard.innerHTML = /*html*/`
             <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
             <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['dream_world']['front_default']}" alt="">
@@ -117,8 +121,11 @@ async function renderPokemon(BASE_ResponseToJson) {
                 <div class="baseInfoContainer whiteLetters">
                     ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
                 </div>
-                <div class="baseInfoContainer whiteLetters">
-                    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                <div class="cardFooter whiteLetters">
+                    <div>
+                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                    </div>
+                    <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
                 </div>
             </div>
         `;
@@ -134,9 +141,99 @@ async function renderPokemon(BASE_ResponseToJson) {
 }
 
 
+async function showPokemon(pokemonName, POKE_ResponseToJson) {
+    console.log("Das ausgewählte Pokémon ist: " + pokemonName);
+    document.getElementById('shadowLayer').classList.remove('d-none');
+    document.getElementById('shadowLayer').classList.add('d-block');
+    showContainer = document.getElementById('showContainer');
+    showContainer.classList.remove('d-none');
+    showContainer.classList.add('d-block');
+
+    let hpInPercent = (POKE_ResponseToJson['stats'][0]['base_stat'] / 255) * 100;
+    let attackInPercent = (POKE_ResponseToJson['stats'][1]['base_stat'] / 190) * 100;
+    let defenseInPercent = (POKE_ResponseToJson['stats'][2]['base_stat'] / 230) * 100;
+    let specialAttackInPercent = (POKE_ResponseToJson['stats'][3]['base_stat'] / 194) * 100;
+    let specialDefenseInPercent = (POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100;
+    let speedInPercent = (POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100;
+
+
+    showContainer.innerHTML = /*html*/`
+        <div class="${POKE_ResponseToJson['types'][0]['type']['name']} cardShow ">
+            <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['dream_world']['front_default']}" alt="${pokemonName}">
+            <h2 class="capitalize showH2">${pokemonName}:</h2>
+            <div class="statsContainer">
+                
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Hp-color glitterStats" style="width: ${hpInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][0]['base_stat']}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][1]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Attack-color glitterStats" style="width: ${attackInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][1]['base_stat']}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][2]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Defense-color glitterStats" style="width: ${defenseInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][2]['base_stat']}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Special-Attack-color glitterStats" style="width: ${specialAttackInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][3]['base_stat']}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][4]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Special-Defense-color glitterStats" style="width: ${specialDefenseInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][4]['base_stat']}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][5]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Speed-color glitterStats" style="width: ${speedInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][5]['base_stat']}</p>
+                        </div>
+                    </div>
+                </div>
+                            <!-- FINDE HERAUS WIE MAN DIE ANIMATION FUER DIE BARS XUM HEREINSCHWINGEN MACHEN KANN -->
+            </div>
+        </div>    
+    `;
+}
+
+
+function resume(){
+    document.getElementById('shadowLayer').classList.remove('d-block');
+    document.getElementById('shadowLayer').classList.add('d-none');
+    showContainer.classList.remove('d-block');
+    showContainer.classList.add('d-none');
+}
+
+
 async function morePokemon() {
     document.getElementById('moreButton').style.display = 'none';
-    document.getElementById('loadingCircle').style.display = 'block';
+    document.getElementById('loadingCircle').style.display = 'flex';
 
     pokeAmount = Number(pokeAmount);
     pokeAmount += 20; // Erhöhe die Anzahl der anzuzeigenden Pokemon
@@ -167,10 +264,14 @@ async function renderNewPokemon(pokemonNames) {
         let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
         let types = pokemonData['types'].map(type => type.type.name);
         let cries = pokemonData['cries']['latest'];
+        let pokeWeight = pokemonData['weight'] / 10;
 
         let pokemonCard = document.createElement('div');
         pokemonCard.className = 'card';
         pokemonCard.id = pokemonNames[i];
+        pokemonCard.onclick = function() {
+            showPokemon(pokemonNames[i], pokemonData);
+        };
         pokemonCard.innerHTML = /*html*/`
             <h2 class="capitalize whiteLetters">${pokemonNames[i]}</h2>
             <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="${pokemonNames[i]}">
@@ -183,8 +284,11 @@ async function renderNewPokemon(pokemonNames) {
                 <div class="baseInfoContainer whiteLetters">
                     ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
                 </div>
-                <div class="baseInfoContainer whiteLetters">
-                    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                <div class="cardFooter whiteLetters">
+                    <div>
+                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                    </div>
+                    <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
                 </div>
             </div>
         `;
@@ -255,7 +359,7 @@ async function renderFirst20PokemonWhenEmptyInput(){
 
 
 function loadingCircle() {
-    document.getElementById('loadingCircle').style.display='block';
+    document.getElementById('loadingCircle').style.display='flex';
 }
 
 
@@ -292,7 +396,7 @@ async function filterPokemon(event) {
     }
 
     // Abfrage für das aktuelle Suchergebnis
-    const searchResponse = await fetch(`${BASE_URL}?limit=151&offset=0`);
+    const searchResponse = await fetch(`${BASE_URL}?limit=1302&offset=0`);
     const searchData = await searchResponse.json();
     const allPokemonData = searchData.results.map(pokemon => pokemon.name);
 
@@ -312,13 +416,17 @@ async function filterPokemon(event) {
             let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
             let types = pokemonData['types'].map(type => type.type.name);
             let cries = pokemonData['cries']['latest'];
+            let pokeWeight = pokemonData['weight'] / 10;
 
             let pokemonCard = document.createElement('div');
             pokemonCard.className = 'card';
             pokemonCard.id = name;
+            pokemonCard.onclick = function() {
+                showPokemon(name, pokemonData);
+            };
             pokemonCard.innerHTML = /*html*/`
                 <h2 class="capitalize whiteLetters">${name}</h2>
-                <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="">
+                <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="${name}-picture">
                 <div class="descriptionContainer">
                     <h3 class="whiteLetters">Abilities:</h3>
                     <div class="baseInfoContainer whiteLetters">
@@ -328,8 +436,11 @@ async function filterPokemon(event) {
                     <div class="baseInfoContainer whiteLetters">
                         ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
                     </div>
-                    <div class="baseInfoContainer whiteLetters">
-                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                    <div class="cardFooter whiteLetters">
+                        <div>
+                            <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                        </div>
+                        <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
                     </div>
                 </div>
             `;

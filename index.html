@@ -18,19 +18,28 @@
         <div id="content" class="pokedexContainer">
 
         </div>
-        <div id="loadingCircle" class="spinner-border text-warning" role="status">
-            <span class="visually-hidden">Loading...</span>
+        <div id="loadingCircle" class="loadingDisplay">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="spanLoadingFiller">Loading Pokemon...</span>
         </div>
     </div>
 
     <div class="yellowButtonContainer">
         <button id="moreButton" class="yellowButton" onclick="morePokemon()">See more Pokemon</button>
     </div>
+
+    <div id="shadowLayer" onclick="resume()" class="d-none">
+    </div>
+
+    <div id="showContainer" class="d-none">
+
+    </div>
         
     <div w3-include-html="./templates/footer.html">
     </div>
         
-    <div id="shadowLayer" class="d-none">
-    </div>
+
 </body>
 </html>

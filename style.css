@@ -66,21 +66,23 @@
 
 .baseInfoContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     gap: 8px;
 }
+
 
 .type {
 
     background-color: rgba(0, 0, 0, 0.221);
     border-radius: 4px;
-    padding: 4px;
+    padding: 2px 4px;    
     gap: 4px;
     display: flex;
 }
 
 .baseImg {
-    height: 140px;
+    min-height: 140px;    
+    max-height: 140px;    
     margin: 8px 0px 8px 0px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
     border: 2px solid rgb(203, 203, 203);
@@ -116,79 +118,11 @@
 }
 
 .grass {
-    background-color: rgba(88, 168, 88, 0.721) !important;
+    background-color: rgba(88, 168, 88) !important;
 }
 
 .whiteLetters {
     color: white !important;
-}
-
-.bug {
-    background-color: #A8B820 !important; /* Hellgrün */
-}
-
-.fire {
-    background-color: #F08030 !important; /* Orange */
-}
-
-.water {
-    background-color: #6890F0 !important; /* Blau */
-}
-
-.electric {
-    background-color: #F8D030 !important; /* Gelb */
-}
-
-.normal {
-    background-color: #cdcdb5 !important; /* Normal */
-}
-
-.psychic {
-    background-color: #F85888 !important; /* Pink */
-}
-
-.flying {
-    background-color: #A890F0 !important; /* Violett */
-}
-
-.poison {
-    background-color: #A040A0 !important; /* Lila */
-}
-
-.ground {
-    background-color: #E0C068 !important; /* Braun */
-}
-
-.rock {
-    background-color: #B8A038 !important; /* Graubraun */
-}
-
-.electric {
-    background-color: #F8D030 !important; /* Gelb */
-}
-
-.fighting {
-    background-color: #C03028 !important; /* Rot */
-}
-
-.ice {
-    background-color: #98D8D8 !important; /* Hellblau */
-}
-
-.steel {
-    background-color: #B8B8D0 !important; /* Grau */
-}
-
-.dark {
-    background-color: #705848 !important; /* Dunkelbraun */
-}
-
-.dragon {
-    background-color: #7038F8 !important; /* Indigo */
-}
-
-.ghost {
-    background-color: #705898 !important; /* Violett */
 }
 
 .descriptionContainer{
@@ -250,6 +184,10 @@ h2 {
     display: none;
 }
 
+.d-block {
+    display: block;
+}
+
 /* CSS TOOLS */
 /* CSS TOOLS */
 /* CSS TOOLS */
@@ -262,8 +200,255 @@ h2 {
     background-color: rgb(0, 0, 0, 0.4);
     height: 100%;
     width: 100%; /* Hinzugefügt */
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     z-index: 1;
+}
+
+.spanLoadingFiller {
+    color: rgb(255,204,1);
+    font-weight: 640;
+    margin-left: 8px;
+}
+
+.loadingDisplay {
+    display: flex;
+    align-items: center;
+}
+
+.pokeWeight {
+    font-size: 14px;
+    align-items: end;
+    display: flex;
+    gap: 8px;
+    margin: 0px !important;
+}
+
+
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+}
+
+.showImg {
+    width: 400px;
+    height: 400px;
+    border: 2px solid rgb(203, 203, 203);
+}
+
+.cardShow {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 480px;
+    height: 744px;
+    position: fixed;
+    z-index: 2;
+    display: grid;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 16px solid rgb(255,204,1) !important;
+    border-radius: 10px;
+    padding: 16px !important;
+    box-sizing: border-box !important; 
+}
+
+.statsContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    width: 100%;
+}
+
+.statsBarContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.321);
+    padding: 2px;
+    border-radius: 4px;
+}
+
+.statsCategory {
+    margin-bottom: 3px !important;
+    width: 184px;
+    font-weight: 500;
+    margin-left: 4px;
+}
+
+.progress{
+    width: 100%;
+    border-radius: 4px !important;
+    height: 24px !important;
+    margin-right: 2px;
+}
+
+.showH2{
+    color: white;
+    justify-self: start;
+    display: flex;
+    margin-bottom: 8px !important;
+    font-weight: bold;
+}
+
+.Hp-color {
+    background-color: #ff4d4d !important; /* Helleres Rot */
+}
+
+.Attack-color {
+    background-color: #ff934c !important; /* Helleres Orange */
+}
+
+.Defense-color {
+    background-color: #ffeb56 !important; /* Helleres Gelb */
+}
+
+.Special-Attack-color {
+    background-color: #64aaff !important; /* Helleres Blau */
+}
+
+.Special-Defense-color {
+    background-color: #87ff65 !important; /* Helleres Grün */
+}
+
+.Speed-color {
+    background-color: #ff69a0 !important; /* Helleres Rosa */
+}
+
+.bug {
+    background-color: #849151 !important; /* Dunkleres Hellgrün */
+}
+
+.fire {
+    background-color: #D86F42 !important; /* Dunkleres Orange */
+}
+
+.water {
+    background-color: #5479e5 !important; /* Dunkleres Blau */
+}
+
+.electric {
+    background-color: #D8C442 !important; /* Dunkleres Gelb */
+}
+
+.normal {
+    background-color: #A5A58C !important; /* Dunkleres Normal */
+}
+
+.psychic {
+    background-color: #D86F99 !important; /* Dunkleres Pink */
+}
+
+.flying {
+    background-color: #877FD8 !important; /* Dunkleres Violett */
+}
+
+.poison {
+    background-color: #8C648C !important; /* Dunkleres Lila */
+}
+
+.ground {
+    background-color: #B09060 !important; /* Dunkleres Braun */
+}
+
+.rock {
+    background-color: #8C8042 !important; /* Dunkleres Graubraun */
+}
+
+.fighting {
+    background-color: #A85151 !important; /* Dunkleres Rot */
+}
+
+.ice {
+    background-color: #72CCCC !important; /* Dunkleres Hellblau */
+}
+
+.steel {
+    background-color: #A0A0C0 !important; /* Dunkleres Grau */
+}
+
+.dark {
+    background-color: #594C46 !important; /* Dunkleres Dunkelbraun */
+}
+
+.dragon {
+    background-color: #705898 !important; /* Dunkleres Indigo */
+}
+
+.ghost {
+    background-color: #645A82 !important; /* Dunkleres Violett */
+}
+
+.glitter {
+    background-image: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000);
+    background-size: 300% 300%;
+    animation: glitterAnimation 5s infinite;
+}
+
+/* Glitzer-Effekt für HP */
+.Hp-color.glitterStats {
+    background-image: linear-gradient(45deg, #cc6666, #ff4d4d, #cc6666);
+}
+
+/* Glitzer-Effekt für Attack */
+.Attack-color.glitterStats {
+    background-image: linear-gradient(45deg, #cc8533, #ff934c, #cc8533);
+}
+
+/* Glitzer-Effekt für Defense */
+.Defense-color.glitterStats {
+    background-image: linear-gradient(45deg, #e6cc33, #ffeb56, #e6cc33);
+}
+
+/* Glitzer-Effekt für Special Attack */
+.Special-Attack-color.glitterStats {
+    background-image: linear-gradient(45deg, #6688cc, #64aaff, #6688cc);
+}
+
+/* Glitzer-Effekt für Special Defense */
+.Special-Defense-color.glitterStats {
+    background-image: linear-gradient(45deg, #66cc99, #87ff65, #66cc99);
+}
+
+/* Glitzer-Effekt für Speed */
+.Speed-color.glitterStats {
+    background-image: linear-gradient(45deg, #cc6699, #ff69a0, #cc6699);
+}
+
+.glitterStats {
+    background-size: 200% 100% !important;
+    animation: glitterAnimation 5s infinite !important;
+}
+
+@keyframes glitterAnimation {
+    0%, 100% {
+        background-position: 0% 100%;
+    }
+    50% {
+        background-position: 100% 0%;
+    }
+}
+
+.statsNumber{
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.statsBarContainer .progress-bar {
+    animation: barSwingAnimation 3s ease-in-out forwards;
+}
+
+@keyframes barSwingAnimation {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
 }

@@ -108,7 +108,7 @@ async function renderPokemon(BASE_ResponseToJson) {
         };
         pokemonCard.innerHTML = /*html*/`
             <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
-            <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['dream_world']['front_default']}" alt="">
+            <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="">
             <div class="descriptionContainer">
                 <h3 class="whiteLetters">Abilities:</h3>
                 <div class="baseInfoContainer whiteLetters">
@@ -159,7 +159,7 @@ async function showPokemon(pokemonName, POKE_ResponseToJson) {
 
     showContainer.innerHTML = /*html*/`
         <div class="${POKE_ResponseToJson['types'][0]['type']['name']} cardShow ">
-            <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['dream_world']['front_default']}" alt="${pokemonName}">
+            <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
             <h2 class="capitalize showH2">${pokemonName}:</h2>
             <div class="statsContainer">
                 
@@ -274,7 +274,7 @@ async function renderNewPokemon(pokemonNames) {
         };
         pokemonCard.innerHTML = /*html*/`
             <h2 class="capitalize whiteLetters">${pokemonNames[i]}</h2>
-            <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="${pokemonNames[i]}">
+            <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonNames[i]}">
             <div class="descriptionContainer">
                 <h3 class="whiteLetters">Abilities:</h3>
                 <div class="baseInfoContainer whiteLetters">
@@ -396,7 +396,7 @@ async function filterPokemon(event) {
     }
 
     // Abfrage für das aktuelle Suchergebnis
-    const searchResponse = await fetch(`${BASE_URL}?limit=1302&offset=0`);
+    const searchResponse = await fetch(`${BASE_URL}?limit=1025&offset=0`);
     const searchData = await searchResponse.json();
     const allPokemonData = searchData.results.map(pokemon => pokemon.name);
 
@@ -426,7 +426,7 @@ async function filterPokemon(event) {
             };
             pokemonCard.innerHTML = /*html*/`
                 <h2 class="capitalize whiteLetters">${name}</h2>
-                <img class="baseImg" src="${pokemonData['sprites']['other']['dream_world']['front_default']}" alt="${name}-picture">
+                <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${name}-picture">
                 <div class="descriptionContainer">
                     <h3 class="whiteLetters">Abilities:</h3>
                     <div class="baseInfoContainer whiteLetters">

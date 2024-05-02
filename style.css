@@ -81,6 +81,7 @@
 }
 
 .baseImg {
+    object-fit: contain;
     min-height: 140px;    
     max-height: 140px;    
     margin: 8px 0px 8px 0px;

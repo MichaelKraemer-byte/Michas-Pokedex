@@ -141,7 +141,7 @@ async function renderPokemon(BASE_ResponseToJson) {
 }
 
 
-async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, cries, pokeWeight) {
+async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, cries, weight) {
     document.body.classList.add("remove-scrolling"); 
     document.getElementById('shadowLayer').classList.remove('d-none');
     document.getElementById('shadowLayer').classList.add('d-block');
@@ -156,6 +156,8 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
     let specialDefenseInPercent = (POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100;
     let speedInPercent = (POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100;
 
+    fillOutCurrentPokemonJSON(pokemonName, types, abilities, cries, weight);
+
     showContainer.innerHTML = /*html*/`
         <div class="${types[0]} cardShow "> 
             <div class="title">
@@ -164,9 +166,9 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
                 </div>
             </div>
             <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
-            <div class="statsContainer">
+            <div id="${pokemonName}Stats" class="statsContainer">
                 
-                <div id="${pokemonName}Stats" class="statsBarContainer">
+                <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
                         <div class="Hp-color glitterStats" style="width: ${hpInPercent}%;">
@@ -192,8 +194,7 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
                         </div>
                     </div>
                 </div>
-                <!-- HIER WEITER MACHEN> GUCK IN DEN DEBUGGER UND SCHSUE NACH WELCHE FORM DIE VARIABLEN HABEN. sie scheinen als strings uebergeben zu werden. -->
-                <button onclick="secondStatsPage(${pokemonName}, ${abilities}, ${types}, ${cries}, ${pokeWeight})" class="arrowButton">
+                <button onclick="secondStatsPage(${currentPokemon['name']})" class="arrowButton">
                     <div class="halfCircle"></div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
                         <path d="M0 0h24v24H0z" fill="none"/>
@@ -234,29 +235,45 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
 }
 
 
-async function secondStatsPage(pokemonName, abilities, types, cries, pokeWeight) {
+function fillOutCurrentPokemonJSON(name, types, abilities, cries, weight) {
+    currentPokemon.name = `'${name}'`;
+    // Hinzufügen der Werte zu den Arrays
+    currentPokemon.types.push(...types); // Fügt die Elemente von "types" dem Array "currentPokemon.types" hinzu
+    currentPokemon.abilities.push(...abilities); // Fügt die Elemente von "abilities" dem Array "currentPokemon.abilities" hinzu
+    currentPokemon.cries = `'${cries}'`;
+    currentPokemon.weight = `'${weight}'`;
+}
+
+
+let currentPokemon = {
+        name: '',
+        types: [],
+        abilities: [],
+        cries: '',
+        weight: '',
+    }
+
+
+async function secondStatsPage(pokemonName) {
     let statsContainer = document.getElementById(`${pokemonName}Stats`);
-    POKE_Response = await fetch(BASE_URL + `/${pokemonName}/`);
-    let POKE_ResponseToJson = await POKE_Response.json();
 
     statsContainer.innerHTML = /*html*/`
         <h2 class="capitalize whiteLetters">${pokemonName}</h2>
-        <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="">
         <div class="descriptionContainer">
             <h3 class="whiteLetters">Abilities:</h3>
             <div class="baseInfoContainer whiteLetters">
-                ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+                ${currentPokemon['abilities'].map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
             </div>
             <h3 class="whiteLetters">Types:</h3>
             <div class="baseInfoContainer whiteLetters">
-                ${types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
+                ${currentPokemon['types'].map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
             </div>
         </div>
         <div class="cardFooter whiteLetters">
             <div>
-                <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                <button class="soundButton" onclick="playSound('${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
             </div>
-            <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
+            <p class="pokeWeight">Weight: <b> ${currentPokemon['weight']} kg</b></p>
         </div>
     `;
 }
@@ -268,6 +285,14 @@ function resume(){
     document.getElementById('shadowLayer').classList.add('d-none');
     showContainer.classList.remove('d-block');
     showContainer.classList.add('d-none');
+
+    currentPokemon = {
+        name: '',
+        types: [],
+        abilities: [],
+        cries: '',
+        weight: '',
+    }
 }
 
 
@@ -442,6 +467,8 @@ async function filterPokemon(event) {
 
     // Filtern der Pokémon
     let filteredPokemon = allPokemonData.filter(name => name.includes(search));
+
+    filteredPokemon = filteredPokemon.slice(0, 10);
 
     // Anzeigen der passenden Pokémon
     let fragment = document.createDocumentFragment();

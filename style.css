@@ -20,12 +20,13 @@
 }
 
 .card {
+    height: 472px !important;
     width: 280px;
-    height: 416px !important;
     border: 16px solid rgb(255,204,1) !important;
     padding: 8px !important;
     box-sizing: border-box !important; 
     color: white;
+    display: grid !important;
 }
 
 .card:hover {
@@ -81,17 +82,19 @@
 }
 
 .baseImg {
-    object-fit: contain;
-    min-height: 140px;    
-    max-height: 140px;    
-    margin: 8px 0px 8px 0px;
+    justify-self: center;
+    object-fit: cover;
+    object-position: center;
+    width: 228px;
+    height: 220px;
+    margin: 0px 0px 8px 0px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
     border: 2px solid rgb(203, 203, 203);
 }
 
 .card h3 {
     margin: 0px;
-    font-size: 20px;
+    font-size: 17px;
 }
 
 .capitalize {
@@ -129,9 +132,11 @@
 .descriptionContainer{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     height: 100%;
     margin-top: 8px;
+    gap: 4px;
+    margin-top: -4px;
+    margin-left: 4px;
 }
 
 p {
@@ -140,6 +145,12 @@ p {
 
 h2 {
     margin: 0px !important;
+}
+
+.card h2 {
+    font-size: 20px;
+    margin-bottom: 8px !important;
+    margin-left: 4px !important;
 }
 
 .card h2, .card h3 {
@@ -230,12 +241,19 @@ h2 {
 .cardFooter {
     display: flex;
     justify-content: space-between;
+    align-self: end;
+    margin-left: 4px;
+    margin-right: 4px;
+    width: 100%;
 }
 
 .showImg {
+    object-fit: cover;
+    object-position: center;
     width: 400px;
     height: 400px;
     border: 2px solid rgb(203, 203, 203);
+    margin-bottom: 8px;
 }
 
 .cardShow {
@@ -255,6 +273,7 @@ h2 {
     padding: 16px !important;
     box-sizing: border-box !important; 
 }
+
 
 .statsContainer {
     display: flex;
@@ -452,4 +471,94 @@ h2 {
     100% {
         width: 100%;
     }
+}
+
+.remove-scrolling { 
+    height: 100%; 
+    overflow: hidden; 
+  } 
+
+.baseTypeImg {
+    width: 24px;
+    height: 24px;
+    border-radius: 100px;
+    background-color: rgb(255, 255, 255);
+    border: 2px solid rgb(203, 203, 203);
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+  }
+
+.showTypeImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+    background-color: rgb(255, 255, 255);
+    border: 2px solid rgb(203, 203, 203);
+}
+
+.showTypesContainer{
+    display: flex;
+    gap: 8px;
+}
+
+.arrowButton {
+    position: fixed;
+    z-index: 4;
+    right: 0;
+    margin-right: -40px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 0 100px 100px 0; /* Halbkreis nur an der linken Seite */
+    overflow: hidden;
+    cursor: pointer;
+    background-color: rgb(255,204,1);
+    transition: background-color 0.3s ease-in-out; /* Animation für Hintergrundfarbe */
+}
+
+.halfCircle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(255,204,1);
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    transform: scale(2, 1); /* Halbkreis */
+    transition: width 0.3s ease-in-out;
+}
+
+.arrowButton svg {
+    position: relative;
+    z-index: 2;
+    fill: #333; /* Farbe des Pfeils */
+    transition: transform 0.3s ease-in-out;
+    width: 36px; /* Größere Breite für den Pfeil */
+    height: 36px; /* Größere Höhe für den Pfeil */
+}
+
+.stripe {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0; /* Anfangs unsichtbar */
+    height: 100%;
+    background-color: white; /* Farbe des Streifens */
+    transition: width 0.3s ease-in-out; /* Animation für den Streifen */
+}
+
+.arrowButton:hover .halfCircle {
+    width: 0; /* Halbkreis ausfahren */
+}
+
+.arrowButton:hover .stripe {
+    width: 40px; /* Streifen herausfahren */
+}
+
+.arrowButton:hover svg {
+    transform: translateX(4px); /* Animation für den Pfeil */
 }

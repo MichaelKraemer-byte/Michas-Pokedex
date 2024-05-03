@@ -1,0 +1,19 @@
+<div class="descriptionContainer">
+<h3 class="whiteLetters">Abilities:</h3>
+<div class="baseInfoContainer whiteLetters">
+    ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+    <!-- Hier passiert wieder mit map folgendes: Wir wandeln die Werte in dem array abilites in <p></p> Elemente um, 
+    Dann wandeln wir das Array mit diesen <p>-Elementen in einen einzelnen String um - mit .join(''). 
+    (In die Klammern von join koennten wir noch weitere Elemente einfuegen, wenn wir wollten...) -->
+</div>
+<h3 class="whiteLetters">Types:</h3>
+<div class="baseInfoContainer whiteLetters">
+    ${types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
+</div>
+</div>
+<div class="cardFooter whiteLetters">
+<div>
+    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+</div>
+<p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
+</div>

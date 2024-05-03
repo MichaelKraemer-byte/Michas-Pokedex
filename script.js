@@ -33,7 +33,7 @@ let index = 0;
 let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
 
 
-const colorClasses = ['grass', 'bug', 'fire', 'water', 'electric', 'normal', 'psychic', 'flying', 'poison', 'ground', 'rock', 'electric', 'fighting', 'ice', 'steel', 'dark', 'dragon', 'ghost', 'fairy'];
+const colorClasses = ['grass', 'bug', 'fire', 'water', 'electric', 'normal', 'psychic', 'flying', 'poison', 'ground', 'rock', 'fighting', 'ice', 'steel', 'dark', 'dragon', 'ghost', 'fairy'];
 
 
 const pokemonColors = [
@@ -104,7 +104,7 @@ async function renderPokemon(BASE_ResponseToJson) {
         pokemonCard.className = 'card';
         pokemonCard.id = pokemon[pokeIndex - 1]['name'];
         pokemonCard.onclick = function() {
-            showPokemon(pokemon[pokeIndex - 1]['name'], POKE_ResponseToJson);
+            showPokemon(pokemon[pokeIndex - 1]['name'], POKE_ResponseToJson, abilities, types, cries, pokeWeight);
         };
         pokemonCard.innerHTML = /*html*/`
             <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
@@ -119,14 +119,14 @@ async function renderPokemon(BASE_ResponseToJson) {
                 </div>
                 <h3 class="whiteLetters">Types:</h3>
                 <div class="baseInfoContainer whiteLetters">
-                    ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
+                    ${types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
                 </div>
-                <div class="cardFooter whiteLetters">
-                    <div>
-                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
-                    </div>
-                    <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
+            </div>
+            <div class="cardFooter whiteLetters">
+                <div>
+                    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
                 </div>
+                <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
             </div>
         `;
         // wir erstellen lauter pokemonCarten die dann immer einzeln
@@ -141,8 +141,8 @@ async function renderPokemon(BASE_ResponseToJson) {
 }
 
 
-async function showPokemon(pokemonName, POKE_ResponseToJson) {
-    console.log("Das ausgewählte Pokémon ist: " + pokemonName);
+async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, cries, pokeWeight) {
+    document.body.classList.add("remove-scrolling"); 
     document.getElementById('shadowLayer').classList.remove('d-none');
     document.getElementById('shadowLayer').classList.add('d-block');
     showContainer = document.getElementById('showContainer');
@@ -156,14 +156,17 @@ async function showPokemon(pokemonName, POKE_ResponseToJson) {
     let specialDefenseInPercent = (POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100;
     let speedInPercent = (POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100;
 
-
     showContainer.innerHTML = /*html*/`
-        <div class="${POKE_ResponseToJson['types'][0]['type']['name']} cardShow ">
+        <div class="${types[0]} cardShow "> 
+            <div class="title">
+                <h2 class="capitalize showH2">${pokemonName}</h2>
+                <div class="secondPageButton">
+                </div>
+            </div>
             <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
-            <h2 class="capitalize showH2">${pokemonName}:</h2>
             <div class="statsContainer">
                 
-                <div class="statsBarContainer">
+                <div id="${pokemonName}Stats" class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
                         <div class="Hp-color glitterStats" style="width: ${hpInPercent}%;">
@@ -189,6 +192,15 @@ async function showPokemon(pokemonName, POKE_ResponseToJson) {
                         </div>
                     </div>
                 </div>
+                <!-- HIER WEITER MACHEN> GUCK IN DEN DEBUGGER UND SCHSUE NACH WELCHE FORM DIE VARIABLEN HABEN. sie scheinen als strings uebergeben zu werden. -->
+                <button onclick="secondStatsPage(${pokemonName}, ${abilities}, ${types}, ${cries}, ${pokeWeight})" class="arrowButton">
+                    <div class="halfCircle"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M9 17l5-5-5-5v10z"/>
+                    </svg>
+                    <div class="stripe"></div>
+                </button>
 
                 <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
@@ -216,14 +228,42 @@ async function showPokemon(pokemonName, POKE_ResponseToJson) {
                         </div>
                     </div>
                 </div>
-                            <!-- FINDE HERAUS WIE MAN DIE ANIMATION FUER DIE BARS XUM HEREINSCHWINGEN MACHEN KANN -->
             </div>
         </div>    
     `;
 }
 
 
+async function secondStatsPage(pokemonName, abilities, types, cries, pokeWeight) {
+    let statsContainer = document.getElementById(`${pokemonName}Stats`);
+    POKE_Response = await fetch(BASE_URL + `/${pokemonName}/`);
+    let POKE_ResponseToJson = await POKE_Response.json();
+
+    statsContainer.innerHTML = /*html*/`
+        <h2 class="capitalize whiteLetters">${pokemonName}</h2>
+        <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="">
+        <div class="descriptionContainer">
+            <h3 class="whiteLetters">Abilities:</h3>
+            <div class="baseInfoContainer whiteLetters">
+                ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+            </div>
+            <h3 class="whiteLetters">Types:</h3>
+            <div class="baseInfoContainer whiteLetters">
+                ${types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
+            </div>
+        </div>
+        <div class="cardFooter whiteLetters">
+            <div>
+                <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+            </div>
+            <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
+        </div>
+    `;
+}
+
+
 function resume(){
+    document.body.classList.remove("remove-scrolling"); 
     document.getElementById('shadowLayer').classList.remove('d-block');
     document.getElementById('shadowLayer').classList.add('d-none');
     showContainer.classList.remove('d-block');
@@ -434,14 +474,14 @@ async function filterPokemon(event) {
                     </div>
                     <h3 class="whiteLetters">Types:</h3>
                     <div class="baseInfoContainer whiteLetters">
-                        ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
+                        ${types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
                     </div>
-                    <div class="cardFooter whiteLetters">
-                        <div>
-                            <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
-                        </div>
-                        <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
+                </div>
+                <div class="cardFooter whiteLetters">
+                    <div>
+                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
                     </div>
+                    <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
                 </div>
             `;
             fragment.appendChild(pokemonCard);

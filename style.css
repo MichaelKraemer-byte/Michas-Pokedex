@@ -105,7 +105,6 @@
     border: 0px;
     background-color: rgb(255, 220, 81);
     border-radius: 4px;
-    margin-left: 8px;
 }
 
 .soundButton:hover, .yellowButton:hover  {
@@ -633,4 +632,9 @@ h2 {
 
 .arrowButtonLeft:hover svg {
     transform: translateX(-16px); /* Animation für den Pfeil */
+}
+
+.titleContainer{
+    display: flex;
+    justify-content: space-between;
 }

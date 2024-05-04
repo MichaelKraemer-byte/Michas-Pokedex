@@ -28,39 +28,25 @@ function includeHTML() {
 
 
 let pokeAmount = "20";
-let offset = "0";
-let index = 0;
+
 let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
-
-
-const colorClasses = ['grass', 'bug', 'fire', 'water', 'electric', 'normal', 'psychic', 'flying', 'poison', 'ground', 'rock', 'fighting', 'ice', 'steel', 'dark', 'dragon', 'ghost', 'fairy'];
-
-
-const pokemonColors = [
-    ['grass', 'grass'],
-    ['bug', 'bug'],
-    ['fire', 'fire'],
-    ['water', 'water'],
-    ['electric', 'electric'],
-    ['normal', 'normal'],
-    ['psychic', 'psychic'],
-    ['flying', 'flying'],
-    ['poison', 'poison'],
-    ['ground', 'ground'],
-    ['rock', 'rock'],
-    ['electric', 'electric'],
-    ['fighting', 'fighting'],
-    ['ice', 'ice'],
-    ['steel', 'steel'],
-    ['dark', 'dark'],
-    ['dragon', 'dragon'],
-    ['ghost', 'ghost'],
-    ['fairy', 'fairy']
-];
-
 
 let allPokemon = [];
 
+let currentPokemon = {
+        id: '',
+        name: '',
+        types: [],
+        abilities: [],
+        cries: '',
+        weight: '',
+        hpInPercent: '',
+        attackInPercent: '',
+        defenseInPercent: '',
+        specialAttackInPercent: '',
+        specialDefenseInPercent: '',
+        speedInPercent: '',
+}
 
 async function getData() {
     document.getElementById('moreButton').style.display='none';
@@ -101,13 +87,16 @@ async function renderPokemon(BASE_ResponseToJson) {
 
         // Einzelnes HTML-Element erstellen
         let pokemonCard = document.createElement('div');
-        pokemonCard.className = 'card';
+        pokemonCard.classList.add('card', types[0]);
         pokemonCard.id = pokemon[pokeIndex - 1]['name'];
         pokemonCard.onclick = function() {
             showPokemon(pokemon[pokeIndex - 1]['name'], POKE_ResponseToJson, abilities, types, cries, pokeWeight);
         };
         pokemonCard.innerHTML = /*html*/`
-            <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
+            <div class="titleContainer">
+                <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
+                <h2 class="whiteLetters">#${POKE_ResponseToJson['id']}</h2>
+            </div>
             <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="">
             <div class="descriptionContainer">
                 <h3 class="whiteLetters">Abilities:</h3>
@@ -136,12 +125,12 @@ async function renderPokemon(BASE_ResponseToJson) {
     document.getElementById('loadingCircle').style.display='none';
     // zum Schluss fuegen wir das grosse aufgebaute Fragment zum DOM-Baum hinzu:
     content.appendChild(fragment); 
-    applyColors();
     document.getElementById('moreButton').style.display='block';
 }
 
 
 async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, cries, weight) {
+
     document.body.classList.add("remove-scrolling"); 
     document.getElementById('shadowLayer').classList.remove('d-none');
     document.getElementById('shadowLayer').classList.add('d-block');
@@ -156,14 +145,13 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
     let specialDefenseInPercent = (POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100;
     let speedInPercent = (POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100;
 
-    fillOutCurrentPokemonJSON(pokemonName, types, abilities, cries, weight);
+    fillOutCurrentPokemonJSON(POKE_ResponseToJson, pokemonName, types, abilities, cries, weight);
 
     showContainer.innerHTML = /*html*/`
         <div class="${types[0]} cardShow "> 
-            <div class="title">
+            <div class="titleContainer">
                 <h2 class="capitalize showH2">${pokemonName}</h2>
-                <div class="secondPageButton">
-                </div>
+                <h2 class="whiteLetters">#${POKE_ResponseToJson['id']}</h2>
             </div>
             <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
             <div id="${pokemonName}DescriptionContent">
@@ -263,23 +251,20 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
 }
 
 
-function fillOutCurrentPokemonJSON(name, types, abilities, cries, weight) {
+function fillOutCurrentPokemonJSON(POKE_ResponseToJson, name, types, abilities, cries, weight) {
+    currentPokemon.id = `${POKE_ResponseToJson['id']}`;
     currentPokemon.name = `'${name}'`;
-    // Hinzufügen der Werte zu den Arrays
-    currentPokemon.types.push(...types); // Fügt die Elemente von "types" dem Array "currentPokemon.types" hinzu
-    currentPokemon.abilities.push(...abilities); // Fügt die Elemente von "abilities" dem Array "currentPokemon.abilities" hinzu
+    currentPokemon.types.push(...types); 
+    currentPokemon.abilities.push(...abilities); 
     currentPokemon.cries = `${cries}`;
     currentPokemon.weight = `${weight}`;
+    currentPokemon.hpInPercent = `${(POKE_ResponseToJson['stats'][0]['base_stat'] / 255) * 100}`;
+    currentPokemon.attackInPercent = `${(POKE_ResponseToJson['stats'][1]['base_stat'] / 190) * 100})`;
+    currentPokemon.defenseInPercent = `${(POKE_ResponseToJson['stats'][2]['base_stat'] / 230) * 100}`;
+    currentPokemon.specialAttackInPercent = `${(POKE_ResponseToJson['stats'][3]['base_stat'] / 194) * 100}`;
+    currentPokemon.specialDefenseInPercent = `${(POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100})`;
+    currentPokemon.speedInPercent = `${(POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100}`;
 }
-
-
-let currentPokemon = {
-        name: '',
-        types: [],
-        abilities: [],
-        cries: '',
-        weight: '',
-    }
 
 
 function secondStatsPage(pokemonName) {
@@ -353,13 +338,16 @@ async function renderNewPokemon(pokemonNames) {
         let pokeWeight = pokemonData['weight'] / 10;
 
         let pokemonCard = document.createElement('div');
-        pokemonCard.className = 'card';
+        pokemonCard.classList.add('card', types[0]);
         pokemonCard.id = pokemonNames[i];
         pokemonCard.onclick = function() {
             showPokemon(pokemonNames[i], pokemonData, abilities, types, cries, pokeWeight);
         };
         pokemonCard.innerHTML = /*html*/`
-            <h2 class="capitalize whiteLetters">${pokemonNames[i]}</h2>
+            <div class="titleContainer">
+                <h2 class="capitalize whiteLetters">${pokemonNames[i]}</h2>
+                <h2 class="whiteLetters">#${pokemonData['id']}</h2>
+            </div>
             <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonNames[i]}">
             <div class="descriptionContainer">
                 <h3 class="whiteLetters">Abilities:</h3>
@@ -382,7 +370,6 @@ async function renderNewPokemon(pokemonNames) {
     }
 
     content.appendChild(fragment); 
-    applyColors();
     document.getElementById('loadingCircle').style.display = 'none';
     document.getElementById('moreButton').style.display='block';
 }
@@ -393,45 +380,6 @@ function playSound(soundURL) {
     AUDIO.play();
 }
 
-
-function applyColors() {
-    let iElements = document.querySelectorAll('i');
-    pokemonColors.forEach(([type, color]) => {
-        applyColor(iElements, type, color);
-    });
-}
-
-
-function applyColor(iElements, type, color) {
-    iElements.forEach(element => {
-        if (element.innerHTML.includes(type) && !colorClasses.some(c => element.closest('.card').classList.contains(c))) {
-            // Die Bedingung besagt es muss zuerst sicher gestellt sein das der type vorhanden ist, der von der applyColor funktion mitgegeben wird.
-            // && und wird sichergestellt, ob nicht schon eine Klasse mit einem Wert aus colorClasses in der Card existiert. 
-            let card = element.closest('.card');
-            card.classList.add(color);
-            // Dann wird dieser card diese Klasse hinzugefuegt (die die Farbe bestimmt).
-        }
-    });
-}
-
-
-// function filterPokemon(){
-//     let search = document.getElementById('search').value.toLowerCase();
-
-//     let cards = document.querySelectorAll('.card'); // Alle Karten sammeln
-
-//     cards.forEach(card => {
-//         if (search.length >= 3 && card.id.includes(search)) {
-//             card.style.display = "flex"; // Pokémon gefunden, Karte anzeigen
-//         } else if (search.length >= 3) {
-//             card.style.display = "none"; // Pokémon nicht gefunden, Karte ausblenden
-//             document.getElementById('moreButton').style.display="none";
-//         } if (search.length <= 2 || !search) {
-//             card.style.display = "flex";
-//             document.getElementById('moreButton').style.display="block";
-//         }
-//     });
-// }
 
 async function renderFirst20PokemonWhenEmptyInput(){
     let search = document.getElementById('search').value.toLowerCase();
@@ -507,13 +455,16 @@ async function filterPokemon(event) {
             let pokeWeight = pokemonData['weight'] / 10;
 
             let pokemonCard = document.createElement('div');
-            pokemonCard.className = 'card';
+            pokemonCard.classList.add('card', types[0]);
             pokemonCard.id = name;
             pokemonCard.onclick = function() {
-                showPokemon(name, pokemonData);
+                showPokemon(name, pokemonData, abilities, types, cries, pokeWeight);
             };
             pokemonCard.innerHTML = /*html*/`
-                <h2 class="capitalize whiteLetters">${name}</h2>
+                <div class="titleContainer">
+                    <h2 class="capitalize whiteLetters">${name}</h2>
+                    <h2 class="whiteLetters">#${pokemonData['id']}</h2>
+                </div>
                 <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${name}-picture">
                 <div class="descriptionContainer">
                     <h3 class="whiteLetters">Abilities:</h3>
@@ -537,6 +488,5 @@ async function filterPokemon(event) {
     }
 
     content.appendChild(fragment);
-    applyColors();
     document.getElementById('moreButton').style.display='none';
 }

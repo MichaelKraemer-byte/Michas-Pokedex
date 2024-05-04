@@ -34,6 +34,7 @@ let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
 let allPokemon = [];
 
 let currentPokemon = {
+        pokemonData: '',
         id: '',
         name: '',
         types: [],
@@ -47,6 +48,118 @@ let currentPokemon = {
         specialDefenseInPercent: '',
         speedInPercent: '',
 }
+
+async function goNextPokemon() {
+    let showContainer = document.getElementById('showContainer');
+    let POKE_Response = await fetch(BASE_URL + `/${(parseFloat(currentPokemon['id'])) + 1 }/`);
+    let POKE_ResponseToJson = await POKE_Response.json();
+
+    fillOutCurrentPokemonJSON(POKE_ResponseToJson);
+    console.log(currentPokemon);
+
+    showContainer.innerHTML = /*html*/`
+        <div class="${currentPokemon['types'][0]} cardShow "> 
+            <div class="titleContainer">
+                <h2 class="capitalize showH2">${currentPokemon['name']}</h2>
+                <h2 class="whiteLetters">#${currentPokemon['id']}</h2>
+            </div>
+            <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${currentPokemon['name']}-Picture">
+            <div id="${currentPokemon['name']}DescriptionContent">
+                <div id="${currentPokemon['name']}FirstStatsPage" class="statsContainer">
+                    
+                    <div class="statsBarContainer">
+                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                            <div class="Hp-color glitterStats" style="width: ${currentPokemon['hpInPercent']}%;">
+                                <p class="statsNumber">${POKE_ResponseToJson['stats'][0]['base_stat']}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statsBarContainer">
+                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][1]['stat']['name']}:</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                            <div class="Attack-color glitterStats" style="width: ${currentPokemon['attackInPercent']}%;">
+                                <p class="statsNumber">${POKE_ResponseToJson['stats'][1]['base_stat']}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statsBarContainer">
+                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][2]['stat']['name']}:</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                            <div class="Defense-color glitterStats" style="width: ${currentPokemon['defenseInPercent']}%;">
+                                <p class="statsNumber">${POKE_ResponseToJson['stats'][2]['base_stat']}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="secondStatsPage('${currentPokemon['name']}')" class="arrowButton">
+                        <div class="halfCircle"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
+                            <path d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 17l5-5-5-5v10z"/>
+                        </svg>
+                        <div class="stripe"></div>
+                    </button>
+
+                    <div class="statsBarContainer">
+                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                            <div class="Special-Attack-color glitterStats" style="width: ${currentPokemon['specialAttackInPercent']}%;">
+                                <p class="statsNumber">${POKE_ResponseToJson['stats'][3]['base_stat']}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statsBarContainer">
+                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][4]['stat']['name']}:</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                            <div class="Special-Defense-color glitterStats" style="width: ${currentPokemon['specialDefenseInPercent']}%;">
+                                <p class="statsNumber">${POKE_ResponseToJson['stats'][4]['base_stat']}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="statsBarContainer">
+                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][5]['stat']['name']}:</p>
+                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
+                            <div class="Speed-color glitterStats" style="width: ${currentPokemon['speedInPercent']}%;">
+                                <p class="statsNumber">${POKE_ResponseToJson['stats'][5]['base_stat']}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="${currentPokemon['name']}SecondStatsPage" class="secondStatsContainer d-none">
+                    <div class="descriptionContainer">
+                        <h3 class="whiteLetters">Abilities:</h3>
+                        <div class="baseInfoContainer whiteLetters">
+                            ${currentPokemon['abilities'].map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+                        </div>
+                        <h3 class="whiteLetters">Types:</h3>
+                        <div class="baseInfoContainer whiteLetters">
+                            ${currentPokemon['types'].map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
+                        </div>
+                        <button onclick="firstStatsPage('${currentPokemon['name']}')" id="firstStatsPageButton" class="arrowButtonLeft">
+                            <div class="halfCircleLeft"></div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M15 17l-5-5 5-5v10z"/>
+                            </svg>
+                            <div class="stripeLeft"></div>
+                        </button>
+                    </div>
+                    <div class="cardFooter whiteLetters">
+                        <div>
+                            <button class="soundButton" onclick="playSound('${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
+                        </div>
+                        <p class="pokeWeight">Weight: <b> ${currentPokemon['weight']} kg</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    `;
+}
+
 
 async function getData() {
     document.getElementById('moreButton').style.display='none';
@@ -132,6 +245,7 @@ async function renderPokemon(BASE_ResponseToJson) {
 async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, cries, weight) {
 
     document.body.classList.add("remove-scrolling"); 
+    document.getElementById('shadowContainer').classList.remove('d-none');
     document.getElementById('shadowLayer').classList.remove('d-none');
     document.getElementById('shadowLayer').classList.add('d-block');
     showContainer = document.getElementById('showContainer');
@@ -183,7 +297,7 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
                             </div>
                         </div>
                     </div>
-                    <button onclick="secondStatsPage(${currentPokemon['name']})" class="arrowButton">
+                    <button onclick="secondStatsPage('${currentPokemon['name']}')" class="arrowButton">
                         <div class="halfCircle"></div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
                             <path d="M0 0h24v24H0z" fill="none"/>
@@ -251,13 +365,59 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
 }
 
 
-function fillOutCurrentPokemonJSON(POKE_ResponseToJson, name, types, abilities, cries, weight) {
+// function getPokemonData(POKE_ResponseToJson){
+//     let name = POKE_ResponseToJson['name'];
+//     let abilities = POKE_ResponseToJson['abilities'].map(ability => ability.ability.name);
+//     let types = POKE_ResponseToJson['types'].map(type => type.type.name);
+//     let cries = POKE_ResponseToJson['cries']['latest'];
+//     let pokeWeight = POKE_ResponseToJson['weight'] / 10;
+
+//     passVariablesToFillOutCurrentPokemonJSON(name, types, abilities, cries, pokeWeight);
+// }
+
+
+// function passVariablesToFillOutCurrentPokemonJSON(POKE_ResponseToJson, name, types, abilities, cries, weight) {
+//     fillOutCurrentPokemonJSON(POKE_ResponseToJson, name, types, abilities, cries, weight);
+// }
+
+function emptyCurrentPokemon(){
+    currentPokemon = {
+        pokemonData: '',
+        id: '',
+        name: '',
+        types: [],
+        abilities: [],
+        cries: '',
+        weight: '',
+        hpInPercent: '',
+        attackInPercent: '',
+        defenseInPercent: '',
+        specialAttackInPercent: '',
+        specialDefenseInPercent: '',
+        speedInPercent: '',
+    }
+}
+
+
+function fillOutCurrentPokemonJSON(POKE_ResponseToJson) { //<--, name, types, abilities, cries, weight
+    // if(!name || !types || !abilities || !cries || !weight) {
+    //     getPokemonData(POKE_ResponseToJson);
+    // }
+    emptyCurrentPokemon();
+
+    currentPokemon.pokemonData = `${POKE_ResponseToJson}`;
     currentPokemon.id = `${POKE_ResponseToJson['id']}`;
-    currentPokemon.name = `'${name}'`;
-    currentPokemon.types.push(...types); 
-    currentPokemon.abilities.push(...abilities); 
-    currentPokemon.cries = `${cries}`;
-    currentPokemon.weight = `${weight}`;
+    // currentPokemon.name = `'${name}'`;
+    // currentPokemon.types.push(...types); 
+    // currentPokemon.abilities.push(...abilities); 
+    // currentPokemon.cries = `${cries}`;
+    // currentPokemon.weight = `${weight}`;
+    currentPokemon.name = `${POKE_ResponseToJson['name']}`;
+    currentPokemon.types.push(...(POKE_ResponseToJson['types'].map(type => type.type.name))); 
+    currentPokemon.abilities.push(...(POKE_ResponseToJson['abilities'].map(ability => ability.ability.name))); 
+    currentPokemon.cries = `${POKE_ResponseToJson['cries']['latest']}`;
+    currentPokemon.weight = `${(POKE_ResponseToJson['weight'] / 10)}`;
+
     currentPokemon.hpInPercent = `${(POKE_ResponseToJson['stats'][0]['base_stat'] / 255) * 100}`;
     currentPokemon.attackInPercent = `${(POKE_ResponseToJson['stats'][1]['base_stat'] / 190) * 100})`;
     currentPokemon.defenseInPercent = `${(POKE_ResponseToJson['stats'][2]['base_stat'] / 230) * 100}`;
@@ -287,6 +447,7 @@ function firstStatsPage(pokemonName) {
 
 function resume(){
     document.body.classList.remove("remove-scrolling"); 
+    document.getElementById('shadowContainer').classList.add('d-none');
     document.getElementById('shadowLayer').classList.remove('d-block');
     document.getElementById('shadowLayer').classList.add('d-none');
     showContainer.classList.remove('d-block');
@@ -300,6 +461,7 @@ function resume(){
         weight: '',
     }
 }
+
 
 
 async function morePokemon() {

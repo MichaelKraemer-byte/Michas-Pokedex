@@ -105,6 +105,7 @@
     border: 0px;
     background-color: rgb(255, 220, 81);
     border-radius: 4px;
+    margin-left: 8px;
 }
 
 .soundButton:hover, .yellowButton:hover  {
@@ -280,6 +281,17 @@ h2 {
     justify-content: center;
     flex-direction: column;
     gap: 8px;
+    min-height: 226px;
+    height: 100%;
+    width: 100%;
+}
+
+.secondStatsContainer{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 226px;
     height: 100%;
     width: 100%;
 }
@@ -560,5 +572,65 @@ h2 {
 }
 
 .arrowButton:hover svg {
-    transform: translateX(4px); /* Animation für den Pfeil */
+    transform: translateX(8px); /* Animation für den Pfeil */
+}
+
+.arrowButtonLeft {
+    position: fixed;
+    z-index: 4;
+    top:562px;
+    left: 0; /* Änderung: Knopf auf der linken Seite */
+    margin-left: -40px; /* Änderung: Negative margin-left */
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 100px 0 0 100px; /* Halbkreis nur an der rechten Seite */
+    overflow: hidden;
+    cursor: pointer;
+    background-color: rgb(255,204,1);
+    transition: background-color 0.3s ease-in-out; /* Animation für Hintergrundfarbe */
+}
+
+.halfCircleLeft {
+    position: absolute;
+    top: 0;
+    right: 0; /* Änderung: Halbkreis auf der rechten Seite */
+    width: 100%;
+    height: 100%;
+    background-color: rgb(255,204,1);
+    border-top-right-radius: 50%; /* Änderung: Halbkreis an der rechten Seite */
+    border-bottom-right-radius: 50%; /* Änderung: Halbkreis an der rechten Seite */
+    transform: scale(2, 1); /* Halbkreis */
+    transition: width 0.3s ease-in-out;
+}
+
+.arrowButtonLeft svg {
+    position: relative;
+    z-index: 2;
+    fill: #333; /* Farbe des Pfeils */
+    transition: transform 0.3s ease-in-out;
+    width: 36px; /* Größere Breite für den Pfeil */
+    height: 36px; /* Größere Höhe für den Pfeil */
+}
+
+.stripeLeft {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0; /* Anfangs unsichtbar */
+    height: 100%;
+    background-color: white; /* Farbe des Streifens */
+    transition: width 0.3s ease-in-out; /* Animation für den Streifen */
+}
+
+.arrowButtonLeft:hover .halfCircleLeft {
+    width: 0; /* Halbkreis ausfahren */
+}
+
+.arrowButtonLeft:hover .stripeLeft {
+    width: 40px; /* Streifen herausfahren */
+}
+
+.arrowButtonLeft:hover svg {
+    transform: translateX(-16px); /* Animation für den Pfeil */
 }

@@ -31,7 +31,9 @@ let pokeAmount = "20";
 
 let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
 
-let allPokemon = [];
+let listedPokemon = [];
+
+
 
 let currentPokemon = {
         pokemonData: '',
@@ -290,7 +292,7 @@ async function getData() {
     document.getElementById('moreButton').style.display='none';
     BASE_Response = await fetch(BASE_URL + `?limit=${pokeAmount}&offset=0`);
     BASE_ResponseToJson = await BASE_Response.json();
-    allPokemon = BASE_ResponseToJson['results'].map(results => results.name);
+    listedPokemon = BASE_ResponseToJson['results'].map(results => results.name);
     renderPokemon(BASE_ResponseToJson);
 }
 
@@ -384,7 +386,7 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
     let specialDefenseInPercent = (POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100;
     let speedInPercent = (POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100;
 
-    fillOutCurrentPokemonJSON(POKE_ResponseToJson, pokemonName, types, abilities, cries, weight);
+    fillOutCurrentPokemonJSON(POKE_ResponseToJson);
 
     showContainer.innerHTML = /*html*/`
         <div class="${types[0]} cardShow "> 
@@ -490,21 +492,6 @@ async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, c
 }
 
 
-// function getPokemonData(POKE_ResponseToJson){
-//     let name = POKE_ResponseToJson['name'];
-//     let abilities = POKE_ResponseToJson['abilities'].map(ability => ability.ability.name);
-//     let types = POKE_ResponseToJson['types'].map(type => type.type.name);
-//     let cries = POKE_ResponseToJson['cries']['latest'];
-//     let pokeWeight = POKE_ResponseToJson['weight'] / 10;
-
-//     passVariablesToFillOutCurrentPokemonJSON(name, types, abilities, cries, pokeWeight);
-// }
-
-
-// function passVariablesToFillOutCurrentPokemonJSON(POKE_ResponseToJson, name, types, abilities, cries, weight) {
-//     fillOutCurrentPokemonJSON(POKE_ResponseToJson, name, types, abilities, cries, weight);
-// }
-
 function emptyCurrentPokemon(){
     currentPokemon = {
         pokemonData: '',
@@ -524,19 +511,12 @@ function emptyCurrentPokemon(){
 }
 
 
-function fillOutCurrentPokemonJSON(POKE_ResponseToJson) { //<--, name, types, abilities, cries, weight
-    // if(!name || !types || !abilities || !cries || !weight) {
-    //     getPokemonData(POKE_ResponseToJson);
-    // }
+function fillOutCurrentPokemonJSON(POKE_ResponseToJson) { 
+
     emptyCurrentPokemon();
 
     currentPokemon.pokemonData = `${POKE_ResponseToJson}`;
     currentPokemon.id = `${POKE_ResponseToJson['id']}`;
-    // currentPokemon.name = `'${name}'`;
-    // currentPokemon.types.push(...types); 
-    // currentPokemon.abilities.push(...abilities); 
-    // currentPokemon.cries = `${cries}`;
-    // currentPokemon.weight = `${weight}`;
     currentPokemon.name = `${POKE_ResponseToJson['name']}`;
     currentPokemon.types.push(...(POKE_ResponseToJson['types'].map(type => type.type.name))); 
     currentPokemon.abilities.push(...(POKE_ResponseToJson['abilities'].map(ability => ability.ability.name))); 
@@ -588,7 +568,6 @@ function resume(){
 }
 
 
-
 async function morePokemon() {
     document.getElementById('moreButton').style.display = 'none';
     document.getElementById('loadingCircle').style.display = 'flex';
@@ -597,12 +576,12 @@ async function morePokemon() {
     pokeAmount += 20; // Erhöhe die Anzahl der anzuzeigenden Pokemon
 
     // Neue Pokemon-Daten abrufen
-    const newPokemonResponse = await fetch(`${BASE_URL}?limit=20&offset=${allPokemon.length}`);
+    const newPokemonResponse = await fetch(`${BASE_URL}?limit=20&offset=${listedPokemon.length}`);
     const newPokemonData = await newPokemonResponse.json();
     const newPokemonNames = newPokemonData.results.map(pokemon => pokemon.name);
 
     // Neue Pokemon-Daten zur Liste aller Pokemon hinzufügen
-    allPokemon.push(...newPokemonNames);
+    listedPokemon.push(...newPokemonNames);
 
     // Neue Pokemon anzeigen
     renderNewPokemon(newPokemonNames);
@@ -615,7 +594,7 @@ async function renderNewPokemon(pokemonNames) {
 
     // Daten für jedes neue Pokemon abrufen und anzeigen
     for (let i = 0; i < pokemonNames.length; i++) {
-        const pokemonId = allPokemon.length - pokemonNames.length + i + 1; // Basis auf der Anzahl der bereits vorhandenen Pokémon
+        const pokemonId = listedPokemon.length - pokemonNames.length + i + 1; // Basis auf der Anzahl der bereits vorhandenen Pokémon
         const pokemonResponse = await fetch(`${BASE_URL}/${pokemonId}`);
         const pokemonData = await pokemonResponse.json();
 
@@ -669,8 +648,9 @@ function playSound(soundURL) {
 
 
 async function renderFirst20PokemonWhenEmptyInput(){
-    let search = document.getElementById('search').value.toLowerCase();
+    let search = document.getElementById('search').value.toLowerCase();    
     if (search == '') {
+    document.getElementById('content').innerHTML = '';
     let BASE_Response = await fetch(BASE_URL + `?limit=${pokeAmount}&offset=0`);
     let BASE_ResponseToJson = await BASE_Response.json();
     loadingCircle();
@@ -685,50 +665,48 @@ function loadingCircle() {
 
 
 // Die Filterfunktion
-async function filterPokemon(event) {
-    let inputField = document.getElementById('search');
-    inputField.setCustomValidity('');
+async function filterPokemon() {
     let search = document.getElementById('search').value.toLowerCase();
     let content = document.getElementById('content');
 
-    // Prüfen, ob die Taste Enter gedrückt wurde (keyCode 13)
-    if (event && event.key !== 'Enter') {
-        return;
-    }
-
     // Prüfen, ob die Elemente gefunden wurden
-    if (!search || !content) {
-        console.error('Element not found');
+    if (search == '') {
+        // Fehlermeldung anzeigen
         renderFirst20PokemonWhenEmptyInput();
         return;
     }
 
     // Nur die Suche ausführen, wenn der Suchbegriff mindestens drei Zeichen hat
-    if (search.length < 3) {
-        let inputField = document.getElementById('search');
-        // Fehlermeldung anzeigen
-        inputField.setCustomValidity('Search term must be at least 3 characters long');
-        inputField.reportValidity();
+    if (search.length <= 2) {
         return;
-    } else {
-        // Die benutzerdefinierte Validität zurücksetzen, wenn der Suchbegriff gültig ist
-        let inputField = document.getElementById('search');
-        inputField.setCustomValidity('');
     }
+
+    content.innerHTML = '';
+    document.getElementById('loadingCircle').style.display = 'flex';
 
     // Abfrage für das aktuelle Suchergebnis
     const searchResponse = await fetch(`${BASE_URL}?limit=1025&offset=0`);
     const searchData = await searchResponse.json();
     const allPokemonData = searchData.results.map(pokemon => pokemon.name);
+    let filteredPokemon = allPokemonData.filter(name => name.includes(search));
+
+    if (!filteredPokemon) {
+        setTimeout(() => {
+            document.getElementById('loadingCircle').style.display = 'none';
+            content.innerHTML = /*html*/`
+            <h3 class="whiteLetters">Unfortunately there was nothing found for your search, please try again.<br>Look for at least 3 letters...</h3>
+        `;
+        document.getElementById('moreButton').style.display='none';
+        }, 2000);
+        return;
+    }
 
     // Filtern der Pokémon
-    let filteredPokemon = allPokemonData.filter(name => name.includes(search));
 
     filteredPokemon = filteredPokemon.slice(0, 10);
 
     // Anzeigen der passenden Pokémon
     let fragment = document.createDocumentFragment();
-    content.innerHTML = ''; // Lösche den aktuellen Inhalt, um die neuen Pokémon anzuzeigen
 
     for (let name of filteredPokemon) {
         // Prüfen, ob das Pokémon bereits gerendert wurde
@@ -773,7 +751,7 @@ async function filterPokemon(event) {
             fragment.appendChild(pokemonCard);
         }
     }
-
     content.appendChild(fragment);
+    document.getElementById('loadingCircle').style.display = 'none';
     document.getElementById('moreButton').style.display='none';
 }

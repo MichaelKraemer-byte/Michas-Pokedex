@@ -34,7 +34,6 @@ let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
 let listedPokemon = [];
 
 
-
 let currentPokemon = {
         pokemonData: '',
         id: '',
@@ -52,148 +51,33 @@ let currentPokemon = {
 }
 
 
-async function goNextPokemon() {
+async function changePokemon(direction) {
     let showContainer = document.getElementById('showContainer');
-    if (currentPokemon['id'] == 1025) {
-    let POKE_Response = await fetch(BASE_URL + `/1/`);
-    currentPokemon['pokemonData'] = await POKE_Response.json();
-    } else {
-    let POKE_Response = await fetch(BASE_URL + `/${(parseFloat(currentPokemon['id'])) + 1 }/`);
-    currentPokemon['pokemonData'] = await POKE_Response.json();
+    let id = parseInt(currentPokemon.id); // Konvertiere die ID in eine Zahl
+    if (direction === 'next') {
+        id = (id == 1025) ? 1 : id + 1;
+    } else if (direction === 'back') {
+        id = (id == 1) ? 1025 : id - 1;
     }
-    let POKE_ResponseToJson = currentPokemon['pokemonData'];
 
+    let POKE_Response = await fetch(`${BASE_URL}/${id}/`);
+    let POKE_ResponseToJson = await POKE_Response.json();
+    
     fillOutCurrentPokemonJSON(POKE_ResponseToJson);
-    console.log(currentPokemon);
 
-    showContainer.innerHTML = /*html*/`
-        <div class="${currentPokemon['types'][0]} cardShow "> 
-            <div class="titleContainer">
-                <h2 class="capitalize showH2">${currentPokemon['name']}</h2>
-                <h2 class="whiteLetters">#${currentPokemon['id']}</h2>
-            </div>
-            <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${currentPokemon['name']}-Picture">
-            <div id="${currentPokemon['name']}DescriptionContent">
-                <div id="${currentPokemon['name']}FirstStatsPage" class="statsContainer">
-                    
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Hp-color glitterStats" style="width: ${currentPokemon['hpInPercent']}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][0]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][1]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Attack-color glitterStats" style="width: ${currentPokemon['attackInPercent']}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][1]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][2]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Defense-color glitterStats" style="width: ${currentPokemon['defenseInPercent']}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][2]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="secondStatsPage('${currentPokemon['name']}')" class="arrowButton">
-                        <div class="halfCircle"></div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
-                            <path d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M9 17l5-5-5-5v10z"/>
-                        </svg>
-                        <div class="stripe"></div>
-                    </button>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Special-Attack-color glitterStats" style="width: ${currentPokemon['specialAttackInPercent']}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][3]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][4]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Special-Defense-color glitterStats" style="width: ${currentPokemon['specialDefenseInPercent']}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][4]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][5]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Speed-color glitterStats" style="width: ${currentPokemon['speedInPercent']}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][5]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="${currentPokemon['name']}SecondStatsPage" class="secondStatsContainer d-none">
-                    <div class="descriptionContainer">
-                        <h3 class="whiteLetters">Abilities:</h3>
-                        <div class="baseInfoContainer whiteLetters">
-                            ${currentPokemon['abilities'].map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
-                        </div>
-                        <h3 class="whiteLetters">Types:</h3>
-                        <div class="baseInfoContainer whiteLetters">
-                            ${currentPokemon['types'].map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
-                        </div>
-                        <button onclick="firstStatsPage('${currentPokemon['name']}')" id="firstStatsPageButton" class="arrowButtonLeft">
-                            <div class="halfCircleLeft"></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
-                                <path d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M15 17l-5-5 5-5v10z"/>
-                            </svg>
-                            <div class="stripeLeft"></div>
-                        </button>
-                    </div>
-                    <div class="cardFooter whiteLetters">
-                        <div>
-                            <button class="soundButton" onclick="playSound('${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
-                        </div>
-                        <p class="pokeWeight">Weight: <b> ${currentPokemon['weight']} kg</b></p>
-                    </div>
-                </div>
-            </div>
-        </div>    
-    `;
+    showContainer.innerHTML = renderPokemonDetailsForNextOrBack(POKE_ResponseToJson);
 }
 
-
-async function goBackPokemon() {
-    let showContainer = document.getElementById('showContainer');
-    if (currentPokemon['id'] == 1) {
-    let POKE_Response = await fetch(BASE_URL + `/1025/`);
-    currentPokemon['pokemonData'] = await POKE_Response.json();
-    } else {
-    let POKE_Response = await fetch(BASE_URL + `/${(parseFloat(currentPokemon['id'])) - 1 }/`);
-    currentPokemon['pokemonData'] = await POKE_Response.json();
-    }
-    let POKE_ResponseToJson = currentPokemon['pokemonData'];
-
-    fillOutCurrentPokemonJSON(POKE_ResponseToJson);
-    console.log(currentPokemon);
-
-    showContainer.innerHTML = /*html*/`
-        <div class="${currentPokemon['types'][0]} cardShow "> 
+function renderPokemonDetailsForNextOrBack(POKE_ResponseToJson) {
+    return /*html*/`
+        <div class="${currentPokemon.types[0]} cardShow "> 
             <div class="titleContainer">
-                <h2 class="capitalize showH2">${currentPokemon['name']}</h2>
-                <h2 class="whiteLetters">#${currentPokemon['id']}</h2>
+                <h2 class="capitalize showH2">${currentPokemon.name}</h2>
+                <h2 class="whiteLetters">#${currentPokemon.id}</h2>
             </div>
-            <img class="showImg glitter" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${currentPokemon['name']}-Picture">
-            <div id="${currentPokemon['name']}DescriptionContent">
-                <div id="${currentPokemon['name']}FirstStatsPage" class="statsContainer">
-                    
+            <img class="showImg glitter" src="${currentPokemon['pokemonData']['sprites']['other']['official-artwork']['front_default']}" alt="${currentPokemon.name}-Picture">
+            <div id="${currentPokemon.name}DescriptionContent">
+                <div id="${currentPokemon.name}FirstStatsPage" class="statsContainer">
                     <div class="statsBarContainer">
                         <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
                         <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
@@ -220,7 +104,8 @@ async function goBackPokemon() {
                             </div>
                         </div>
                     </div>
-                    <button onclick="secondStatsPage('${currentPokemon['name']}')" class="arrowButton">
+
+                    <button onclick="secondStatsPage('${currentPokemon.name}')" class="arrowButton">
                         <div class="halfCircle"></div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
                             <path d="M0 0h24v24H0z" fill="none"/>
@@ -228,7 +113,7 @@ async function goBackPokemon() {
                         </svg>
                         <div class="stripe"></div>
                     </button>
-
+                    
                     <div class="statsBarContainer">
                         <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
                         <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
@@ -256,17 +141,17 @@ async function goBackPokemon() {
                         </div>
                     </div>
                 </div>
-                <div id="${currentPokemon['name']}SecondStatsPage" class="secondStatsContainer d-none">
+                <div id="${currentPokemon.name}SecondStatsPage" class="secondStatsContainer d-none">
                     <div class="descriptionContainer">
                         <h3 class="whiteLetters">Abilities:</h3>
                         <div class="baseInfoContainer whiteLetters">
-                            ${currentPokemon['abilities'].map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+                            ${currentPokemon.abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
                         </div>
                         <h3 class="whiteLetters">Types:</h3>
                         <div class="baseInfoContainer whiteLetters">
-                            ${currentPokemon['types'].map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
+                            ${currentPokemon.types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
                         </div>
-                        <button onclick="firstStatsPage('${currentPokemon['name']}')" id="firstStatsPageButton" class="arrowButtonLeft">
+                        <button onclick="firstStatsPage('${currentPokemon.name}')" id="firstStatsPageButton" class="arrowButtonLeft">
                             <div class="halfCircleLeft"></div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
                                 <path d="M0 0h24v24H0z" fill="none"/>
@@ -277,14 +162,13 @@ async function goBackPokemon() {
                     </div>
                     <div class="cardFooter whiteLetters">
                         <div>
-                            <button class="soundButton" onclick="playSound('${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
+                            <button class="soundButton" onclick="playSound('${currentPokemon.cries}')"><img class="soundPNG" src="img/sound.png"></button>
                         </div>
-                        <p class="pokeWeight">Weight: <b> ${currentPokemon['weight']} kg</b></p>
+                        <p class="pokeWeight">Weight: <b> ${currentPokemon.weight} kg</b></p>
                     </div>
                 </div>
             </div>
-        </div>    
-    `;
+        </div>`;
 }
 
 
@@ -370,125 +254,134 @@ async function renderPokemon(BASE_ResponseToJson) {
 
 
 async function showPokemon(pokemonName, POKE_ResponseToJson, abilities, types, cries, weight) {
+    fillOutCurrentPokemonJSON(POKE_ResponseToJson);
+    setupAndManipulateDOM();
+    const statPercentages = calculateStatPercentages(POKE_ResponseToJson);
+    renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types, cries, weight, statPercentages);
+}
 
+
+function setupAndManipulateDOM() {
     document.body.classList.add("remove-scrolling"); 
-    document.getElementById('shadowContainer').classList.remove('d-none');
-    document.getElementById('shadowLayer').classList.remove('d-none');
-    document.getElementById('shadowLayer').classList.add('d-block');
-    showContainer = document.getElementById('showContainer');
+    const shadowContainer = document.getElementById('shadowContainer');
+    const shadowLayer = document.getElementById('shadowLayer');
+    shadowContainer.classList.remove('d-none');
+    shadowLayer.classList.remove('d-none');
+    shadowLayer.classList.add('d-block');
+    const showContainer = document.getElementById('showContainer');
     showContainer.classList.remove('d-none');
     showContainer.classList.add('d-block');
+}
 
-    let hpInPercent = (POKE_ResponseToJson['stats'][0]['base_stat'] / 255) * 100;
-    let attackInPercent = (POKE_ResponseToJson['stats'][1]['base_stat'] / 190) * 100;
-    let defenseInPercent = (POKE_ResponseToJson['stats'][2]['base_stat'] / 230) * 100;
-    let specialAttackInPercent = (POKE_ResponseToJson['stats'][3]['base_stat'] / 194) * 100;
-    let specialDefenseInPercent = (POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100;
-    let speedInPercent = (POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100;
 
-    fillOutCurrentPokemonJSON(POKE_ResponseToJson);
+function calculateStatPercentages(POKE_ResponseToJson) {
+    const stats = POKE_ResponseToJson['stats'];
+    return {
+        hpInPercent: (stats[0]['base_stat'] / 255) * 100,
+        attackInPercent: (stats[1]['base_stat'] / 190) * 100,
+        defenseInPercent: (stats[2]['base_stat'] / 230) * 100,
+        specialAttackInPercent: (stats[3]['base_stat'] / 194) * 100,
+        specialDefenseInPercent: (stats[4]['base_stat'] / 230) * 100,
+        speedInPercent: (stats[5]['base_stat'] / 180) * 100
+    };
+}
+
+
+function renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types, cries, weight, statPercentages) {
+    const showContainer = document.getElementById('showContainer');
+    const currentPokemon = {
+        name: pokemonName,
+        abilities: abilities,
+        types: types,
+        cries: cries,
+        weight: weight
+    };
 
     showContainer.innerHTML = /*html*/`
-        <div class="${types[0]} cardShow "> 
-            <div class="titleContainer">
-                <h2 class="capitalize showH2">${pokemonName}</h2>
-                <h2 class="whiteLetters">#${POKE_ResponseToJson['id']}</h2>
+    <div class="${types[0]} cardShow "> 
+        <div class="titleContainer">
+            <h2 class="capitalize showH2">${pokemonName}</h2>
+            <h2 class="whiteLetters">#${POKE_ResponseToJson['id']}</h2>
+        </div>
+        <img class="showImg glitter loaded" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
+        <div id="${pokemonName}DescriptionContent">
+            <div id="${pokemonName}FirstStatsPage" class="statsContainer">
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.hpInPercent}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Hp-color glitterStats" style="width: ${statPercentages.hpInPercent}%;"></div>
+                    </div>
+                </div>
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][1]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.attackInPercent}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Attack-color glitterStats" style="width: ${statPercentages.attackInPercent}%;"></div>
+                    </div>
+                </div>
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][2]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.defenseInPercent}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Defense-color glitterStats" style="width: ${statPercentages.defenseInPercent}%;"></div>
+                    </div>
+                </div>
+                <!-- More stat bars -->
+                <button onclick="secondStatsPage('${currentPokemon['name']}')" class="arrowButton">
+                    <div class="halfCircle"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M9 17l5-5-5-5v10z"/>
+                    </svg>
+                    <div class="stripe"></div>
+                </button>
+
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.specialAttackInPercent}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Special-Attack-color glitterStats" style="width: ${statPercentages.specialAttackInPercent}%;"></div>
+                    </div>
+                </div>
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][4]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.specialDefenseInPercent}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Special-Defense-color glitterStats" style="width: ${statPercentages.specialDefenseInPercent}%;"></div>
+                    </div>
+                </div>
+                <div class="statsBarContainer">
+                    <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][5]['stat']['name']}:</p>
+                    <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.speedInPercent}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="Speed-color glitterStats" style="width: ${statPercentages.speedInPercent}%;"></div>
+                    </div>
+                </div>
             </div>
-            <img class="showImg glitter loaded" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
-            <div id="${pokemonName}DescriptionContent">
-                <div id="${pokemonName}FirstStatsPage" class="statsContainer">
-                    
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Hp-color glitterStats" style="width: ${hpInPercent}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][0]['base_stat']}</p>
-                            </div>
-                        </div>
+            <div id="${pokemonName}SecondStatsPage" class="secondStatsContainer d-none">
+                <div class="descriptionContainer">
+                    <h3 class="whiteLetters">Abilities:</h3>
+                    <div class="baseInfoContainer whiteLetters">
+                        ${currentPokemon['abilities'].map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
                     </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][1]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Attack-color glitterStats" style="width: ${attackInPercent}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][1]['base_stat']}</p>
-                            </div>
-                        </div>
+                    <h3 class="whiteLetters">Types:</h3>
+                    <div class="baseInfoContainer whiteLetters">
+                        ${currentPokemon['types'].map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
                     </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][2]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Defense-color glitterStats" style="width: ${defenseInPercent}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][2]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="secondStatsPage('${currentPokemon['name']}')" class="arrowButton">
-                        <div class="halfCircle"></div>
+                    <button onclick="firstStatsPage('${pokemonName}')" id="firstStatsPageButton" class="arrowButtonLeft">
+                        <div class="halfCircleLeft"></div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
                             <path d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M9 17l5-5-5-5v10z"/>
+                            <path d="M15 17l-5-5 5-5v10z"/>
                         </svg>
-                        <div class="stripe"></div>
+                        <div class="stripeLeft"></div>
                     </button>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Special-Attack-color glitterStats" style="width: ${specialAttackInPercent}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][3]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][4]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Special-Defense-color glitterStats" style="width: ${specialDefenseInPercent}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][4]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="statsBarContainer">
-                        <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][5]['stat']['name']}:</p>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
-                            <div class="Speed-color glitterStats" style="width: ${speedInPercent}%;">
-                                <p class="statsNumber">${POKE_ResponseToJson['stats'][5]['base_stat']}</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-                <div id="${pokemonName}SecondStatsPage" class="secondStatsContainer d-none">
-                    <div class="descriptionContainer">
-                        <h3 class="whiteLetters">Abilities:</h3>
-                        <div class="baseInfoContainer whiteLetters">
-                            ${currentPokemon['abilities'].map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
-                        </div>
-                        <h3 class="whiteLetters">Types:</h3>
-                        <div class="baseInfoContainer whiteLetters">
-                            ${currentPokemon['types'].map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
-                        </div>
-                        <button onclick="firstStatsPage('${pokemonName}')" id="firstStatsPageButton" class="arrowButtonLeft">
-                            <div class="halfCircleLeft"></div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
-                                <path d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M15 17l-5-5 5-5v10z"/>
-                            </svg>
-                            <div class="stripeLeft"></div>
-                        </button>
+                <div class="cardFooter whiteLetters">
+                    <div>
+                        <button class="soundButton" onclick="playSound('${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
                     </div>
-                    <div class="cardFooter whiteLetters">
-                        <div>
-                            <button class="soundButton" onclick="playSound('${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
-                        </div>
-                        <p class="pokeWeight">Weight: <b> ${currentPokemon['weight']} kg</b></p>
-                    </div>
+                    <p class="pokeWeight">Weight: <b> ${currentPokemon['weight']} kg</b></p>
                 </div>
             </div>
-        </div>    
-    `;
+        </div>
+    </div>    
+`;
 }
 
 
@@ -514,6 +407,25 @@ function emptyCurrentPokemon(){
 function fillOutCurrentPokemonJSON(POKE_ResponseToJson) { 
 
     emptyCurrentPokemon();
+
+    currentPokemon.pokemonData = POKE_ResponseToJson;
+    currentPokemon.id = `${POKE_ResponseToJson['id']}`;
+    currentPokemon.name = `${POKE_ResponseToJson['name']}`;
+    currentPokemon.types.push(...(POKE_ResponseToJson['types'].map(type => type.type.name))); 
+    currentPokemon.abilities.push(...(POKE_ResponseToJson['abilities'].map(ability => ability.ability.name))); 
+    currentPokemon.cries = `${POKE_ResponseToJson['cries']['latest']}`;
+    currentPokemon.weight = `${(POKE_ResponseToJson['weight'] / 10)}`;
+
+    currentPokemon.hpInPercent = `${(POKE_ResponseToJson['stats'][0]['base_stat'] / 255) * 100}`;
+    currentPokemon.attackInPercent = `${(POKE_ResponseToJson['stats'][1]['base_stat'] / 190) * 100})`;
+    currentPokemon.defenseInPercent = `${(POKE_ResponseToJson['stats'][2]['base_stat'] / 230) * 100}`;
+    currentPokemon.specialAttackInPercent = `${(POKE_ResponseToJson['stats'][3]['base_stat'] / 194) * 100}`;
+    currentPokemon.specialDefenseInPercent = `${(POKE_ResponseToJson['stats'][4]['base_stat'] / 230) * 100})`;
+    currentPokemon.speedInPercent = `${(POKE_ResponseToJson['stats'][5]['base_stat'] / 180) * 100}`;
+}
+
+
+function fillOutCurrentPokemonJSONWithoutEmptying(POKE_ResponseToJson) { 
 
     currentPokemon.pokemonData = `${POKE_ResponseToJson}`;
     currentPokemon.id = `${POKE_ResponseToJson['id']}`;
@@ -583,10 +495,13 @@ async function morePokemon() {
     // Neue Pokemon-Daten zur Liste aller Pokemon hinzufügen
     listedPokemon.push(...newPokemonNames);
 
-    // Neue Pokemon anzeigen
-    renderNewPokemon(newPokemonNames);
-}
+    // Neue Pokemon anzeigen, nachdem alle Daten vollständig geladen sind
+    await renderNewPokemon(newPokemonNames);
 
+    // Ladeanimation und Button anzeigen
+    document.getElementById('loadingCircle').style.display = 'none';
+    document.getElementById('moreButton').style.display = 'block';
+}
 
 async function renderNewPokemon(pokemonNames) {
     let content = document.getElementById('content');
@@ -598,46 +513,49 @@ async function renderNewPokemon(pokemonNames) {
         const pokemonResponse = await fetch(`${BASE_URL}/${pokemonId}`);
         const pokemonData = await pokemonResponse.json();
 
-        let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
-        let types = pokemonData['types'].map(type => type.type.name);
-        let cries = pokemonData['cries']['latest'];
-        let pokeWeight = pokemonData['weight'] / 10;
-
-        let pokemonCard = document.createElement('div');
-        pokemonCard.classList.add('card', types[0]);
-        pokemonCard.id = pokemonNames[i];
-        pokemonCard.onclick = function() {
-            showPokemon(pokemonNames[i], pokemonData, abilities, types, cries, pokeWeight);
-        };
-        pokemonCard.innerHTML = /*html*/`
-            <div class="titleContainer">
-                <h2 class="capitalize whiteLetters">${pokemonNames[i]}</h2>
-                <h2 class="whiteLetters">#${pokemonData['id']}</h2>
-            </div>
-            <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonNames[i]}">
-            <div class="descriptionContainer">
-                <h3 class="whiteLetters">Abilities:</h3>
-                <div class="baseInfoContainer whiteLetters">
-                    ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
-                </div>
-                <h3 class="whiteLetters">Types:</h3>
-                <div class="baseInfoContainer whiteLetters">
-                    ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
-                </div>
-                <div class="cardFooter whiteLetters">
-                    <div>
-                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
-                    </div>
-                    <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
-                </div>
-            </div>
-        `;
-        fragment.appendChild(pokemonCard); 
+        // Erstelle eine Karte für das Pokémon und füge sie dem Fragment hinzu
+        let pokemonCard = createPokemonCard(pokemonNames[i], pokemonData);
+        fragment.appendChild(pokemonCard);
     }
 
-    content.appendChild(fragment); 
-    document.getElementById('loadingCircle').style.display = 'none';
-    document.getElementById('moreButton').style.display='block';
+    // Füge das Fragment zum Content-Bereich hinzu
+    content.appendChild(fragment);
+}
+
+function createPokemonCard(pokemonName, pokemonData) {
+    let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
+    let types = pokemonData['types'].map(type => type.type.name);
+    let cries = pokemonData['cries']['latest'];
+    let pokeWeight = pokemonData['weight'] / 10;
+
+    let pokemonCard = document.createElement('div');
+    pokemonCard.classList.add('card', types[0]);
+    pokemonCard.id = pokemonName;
+    pokemonCard.innerHTML = /*html*/`
+        <div class="titleContainer">
+            <h2 class="capitalize whiteLetters">${pokemonName}</h2>
+            <h2 class="whiteLetters">#${pokemonData['id']}</h2>
+        </div>
+        <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
+        <div class="descriptionContainer">
+            <h3 class="whiteLetters">Abilities:</h3>
+            <div class="baseInfoContainer whiteLetters">
+                ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
+            </div>
+            <h3 class="whiteLetters">Types:</h3>
+            <div class="baseInfoContainer whiteLetters">
+                ${types.map(type => `<div><i class="type capitalize">${type}</i></div>`).join('')}
+            </div>
+            <div class="cardFooter whiteLetters">
+                <div>
+                    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                </div>
+                <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
+            </div>
+        </div>
+    `;
+
+    return pokemonCard;
 }
 
 
@@ -669,14 +587,11 @@ async function filterPokemon() {
     let search = document.getElementById('search').value.toLowerCase();
     let content = document.getElementById('content');
 
-    // Prüfen, ob die Elemente gefunden wurden
     if (search == '') {
-        // Fehlermeldung anzeigen
         renderFirst20PokemonWhenEmptyInput();
         return;
     }
 
-    // Nur die Suche ausführen, wenn der Suchbegriff mindestens drei Zeichen hat
     if (search.length <= 2) {
         return;
     }
@@ -684,74 +599,57 @@ async function filterPokemon() {
     content.innerHTML = '';
     document.getElementById('loadingCircle').style.display = 'flex';
 
-    // Abfrage für das aktuelle Suchergebnis
-    const searchResponse = await fetch(`${BASE_URL}?limit=1025&offset=0`);
-    const searchData = await searchResponse.json();
-    const allPokemonData = searchData.results.map(pokemon => pokemon.name);
-    let filteredPokemon = allPokemonData.filter(name => name.includes(search));
+    const filteredPokemon = await fetchFilteredPokemon(search);
 
-    if (!filteredPokemon) {
+    if (!filteredPokemon || filteredPokemon.length === 0) {
         setTimeout(() => {
-            document.getElementById('loadingCircle').style.display = 'none';
-            content.innerHTML = /*html*/`
-            <h3 class="whiteLetters">Unfortunately there was nothing found for your search, please try again.<br>Look for at least 3 letters...</h3>
-        `;
-        document.getElementById('moreButton').style.display='none';
+            displayNoResultsMessage();
         }, 2000);
         return;
     }
 
-    // Filtern der Pokémon
+    displayFilteredPokemon(filteredPokemon);
 
-    filteredPokemon = filteredPokemon.slice(0, 10);
+    document.getElementById('loadingCircle').style.display = 'none';
+    document.getElementById('moreButton').style.display = 'none';
+}
 
-    // Anzeigen der passenden Pokémon
+async function fetchFilteredPokemon(search) {
+    const searchResponse = await fetch(`${BASE_URL}?limit=1025&offset=0`);
+    const searchData = await searchResponse.json();
+    const allPokemonData = searchData.results.map(pokemon => pokemon.name);
+    return allPokemonData.filter(name => name.includes(search)).slice(0, 10);
+}
+
+function displayNoResultsMessage() {
+    const content = document.getElementById('content');
+    content.innerHTML = /*html*/`
+        <h3 class="whiteLetters">Unfortunately there was nothing found for your search, please try again.<br>Look for at least 3 letters...</h3>
+    `;
+    document.getElementById('moreButton').style.display = 'none';
+}
+
+async function displayFilteredPokemon(filteredPokemon) {
+    const content = document.getElementById('content');
     let fragment = document.createDocumentFragment();
 
     for (let name of filteredPokemon) {
-        // Prüfen, ob das Pokémon bereits gerendert wurde
         if (!document.getElementById(name)) {
-            const pokemonResponse = await fetch(`${BASE_URL}/${name}/`);
-            const pokemonData = await pokemonResponse.json();
-
-            let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
-            let types = pokemonData['types'].map(type => type.type.name);
-            let cries = pokemonData['cries']['latest'];
-            let pokeWeight = pokemonData['weight'] / 10;
-
-            let pokemonCard = document.createElement('div');
-            pokemonCard.classList.add('card', types[0]);
-            pokemonCard.id = name;
-            pokemonCard.onclick = function() {
-                showPokemon(name, pokemonData, abilities, types, cries, pokeWeight);
-            };
-            pokemonCard.innerHTML = /*html*/`
-                <div class="titleContainer">
-                    <h2 class="capitalize whiteLetters">${name}</h2>
-                    <h2 class="whiteLetters">#${pokemonData['id']}</h2>
-                </div>
-                <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${name}-picture">
-                <div class="descriptionContainer">
-                    <h3 class="whiteLetters">Abilities:</h3>
-                    <div class="baseInfoContainer whiteLetters">
-                        ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
-                    </div>
-                    <h3 class="whiteLetters">Types:</h3>
-                    <div class="baseInfoContainer whiteLetters">
-                        ${types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
-                    </div>
-                </div>
-                <div class="cardFooter whiteLetters">
-                    <div>
-                        <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
-                    </div>
-                    <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
-                </div>
-            `;
-            fragment.appendChild(pokemonCard);
+            const pokemonData = await fetchPokemonData(name);
+            if (!pokemonData) continue;
+            fragment.appendChild(createPokemonCard(name, pokemonData));
         }
     }
+
     content.appendChild(fragment);
-    document.getElementById('loadingCircle').style.display = 'none';
-    document.getElementById('moreButton').style.display='none';
+}
+
+async function fetchPokemonData(name) {
+    try {
+        const pokemonResponse = await fetch(`${BASE_URL}/${name}/`);
+        return await pokemonResponse.json();
+    } catch (error) {
+        console.error("Error fetching Pokemon data:", error);
+        return null;
+    }
 }

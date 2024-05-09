@@ -71,7 +71,7 @@ async function changePokemon(direction) {
 function renderPokemonDetailsForNextOrBack(POKE_ResponseToJson) {
     return /*html*/`
         <div class="${currentPokemon.types[0]} cardShow "> 
-            <div class="titleContainer">
+            <div class="showTitleContainer">
                 <h2 class="capitalize showH2">${currentPokemon.name}</h2>
                 <h2 class="whiteLetters">#${currentPokemon.id}</h2>
             </div>
@@ -219,10 +219,10 @@ async function renderPokemon(BASE_ResponseToJson) {
         pokemonCard.innerHTML = /*html*/`
             <div class="titleContainer">
                 <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
-                <h2 class="whiteLetters">#${POKE_ResponseToJson['id']}</h2>
+                <h2 class="whiteLetters mobile-d-none">#${POKE_ResponseToJson['id']}</h2>
             </div>
             <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="">
-            <div class="descriptionContainer">
+            <div class="mobile-d-none descriptionContainer">
                 <h3 class="whiteLetters">Abilities:</h3>
                 <div class="baseInfoContainer whiteLetters">
                     ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
@@ -235,7 +235,7 @@ async function renderPokemon(BASE_ResponseToJson) {
                     ${types.map(type => `<div class="type"><i class="capitalize">${type}</i><img class="baseTypeImg" src="img/${type}.png"></div>`).join('')}
                 </div>
             </div>
-            <div class="cardFooter whiteLetters">
+            <div class="mobile-d-none cardFooter whiteLetters">
                 <div>
                     <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
                 </div>
@@ -299,9 +299,9 @@ function renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types
 
     showContainer.innerHTML = /*html*/`
     <div class="${types[0]} cardShow "> 
-        <div class="titleContainer">
+        <div class="titleContainer space-between">
             <h2 class="capitalize showH2">${pokemonName}</h2>
-            <h2 class="whiteLetters">#${POKE_ResponseToJson['id']}</h2>
+            <h2 class="whiteLetters showNumber">#${POKE_ResponseToJson['id']}</h2>
         </div>
         <img class="showImg glitter loaded" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
         <div id="${pokemonName}DescriptionContent">
@@ -309,19 +309,25 @@ function renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types
                 <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][0]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.hpInPercent}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="Hp-color glitterStats" style="width: ${statPercentages.hpInPercent}%;"></div>
+                        <div class="Hp-color glitterStats" style="width: ${statPercentages.hpInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][0]['base_stat']}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][1]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.attackInPercent}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="Attack-color glitterStats" style="width: ${statPercentages.attackInPercent}%;"></div>
+                        <div class="Attack-color glitterStats" style="width: ${statPercentages.attackInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][1]['base_stat']}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][2]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.defenseInPercent}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="Defense-color glitterStats" style="width: ${statPercentages.defenseInPercent}%;"></div>
+                        <div class="Defense-color glitterStats" style="width: ${statPercentages.defenseInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][2]['base_stat']}</p>
+                        </div>
                     </div>
                 </div>
                 <!-- More stat bars -->
@@ -337,19 +343,25 @@ function renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types
                 <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][3]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.specialAttackInPercent}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="Special-Attack-color glitterStats" style="width: ${statPercentages.specialAttackInPercent}%;"></div>
+                        <div class="Special-Attack-color glitterStats" style="width: ${statPercentages.specialAttackInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][3]['base_stat']}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][4]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.specialDefenseInPercent}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="Special-Defense-color glitterStats" style="width: ${statPercentages.specialDefenseInPercent}%;"></div>
+                        <div class="Special-Defense-color glitterStats" style="width: ${statPercentages.specialDefenseInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][4]['base_stat']}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="statsBarContainer">
                     <p class="statsCategory capitalize">${POKE_ResponseToJson['stats'][5]['stat']['name']}:</p>
                     <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="${statPercentages.speedInPercent}" aria-valuemin="0" aria-valuemax="100">
-                        <div class="Speed-color glitterStats" style="width: ${statPercentages.speedInPercent}%;"></div>
+                        <div class="Speed-color glitterStats" style="width: ${statPercentages.speedInPercent}%;">
+                            <p class="statsNumber">${POKE_ResponseToJson['stats'][5]['base_stat']}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -531,10 +543,13 @@ function createPokemonCard(pokemonName, pokemonData) {
     let pokemonCard = document.createElement('div');
     pokemonCard.classList.add('card', types[0]);
     pokemonCard.id = pokemonName;
+    pokemonCard.onclick = function() {
+        showPokemon(pokemonName, pokemonData, abilities, types, cries, pokeWeight);
+    };
     pokemonCard.innerHTML = /*html*/`
         <div class="titleContainer">
             <h2 class="capitalize whiteLetters">${pokemonName}</h2>
-            <h2 class="whiteLetters">#${pokemonData['id']}</h2>
+            <h2 class="whiteLetters mobile-d-none">#${pokemonData['id']}</h2>
         </div>
         <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
         <div class="descriptionContainer">

@@ -335,7 +335,7 @@ async function renderPokemon(BASE_ResponseToJson) {
         pokemonCard.innerHTML = /*html*/`
             <div class="titleContainer">
                 <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
-                <h2 class="whiteLetters">#${POKE_ResponseToJson['id']}</h2>
+                <h2 class="whiteLetters showNumber">#${POKE_ResponseToJson['id']}</h2>
             </div>
             <img class="baseImg" src="${POKE_ResponseToJson['sprites']['other']['official-artwork']['front_default']}" alt="">
             <div class="descriptionContainer">

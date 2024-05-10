@@ -242,8 +242,9 @@ async function renderPokemon(BASE_ResponseToJson) {
                 <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
             </div>
         `;
-        // wir erstellen lauter pokemonCarten die dann immer einzeln
+        // wir erstellen lauter pokemonCard die dann immer einzeln
         // dem fragment hinzugefuegt werden:
+        
         fragment.appendChild(pokemonCard); // hinzufeugen der pokemonCard zum Fragment.
     }
     document.getElementById('loadingCircle').style.display='none';
@@ -552,7 +553,7 @@ function createPokemonCard(pokemonName, pokemonData) {
             <h2 class="whiteLetters mobile-d-none">#${pokemonData['id']}</h2>
         </div>
         <img class="baseImg" src="${pokemonData['sprites']['other']['official-artwork']['front_default']}" alt="${pokemonName}">
-        <div class="descriptionContainer">
+        <div class="mobile-d-none descriptionContainer">
             <h3 class="whiteLetters">Abilities:</h3>
             <div class="baseInfoContainer whiteLetters">
                 ${abilities.map(ability => `<div><i class="type capitalize">${ability}</i></div>`).join('')}
@@ -597,8 +598,8 @@ function loadingCircle() {
 }
 
 
-// Die Filterfunktion
 async function filterPokemon() {
+
     let search = document.getElementById('search').value.toLowerCase();
     let content = document.getElementById('content');
 
@@ -639,8 +640,9 @@ async function fetchFilteredPokemon(search) {
 function displayNoResultsMessage() {
     const content = document.getElementById('content');
     content.innerHTML = /*html*/`
-        <h3 class="whiteLetters">Unfortunately there was nothing found for your search, please try again.<br>Look for at least 3 letters...</h3>
+        <h3 class="whiteLetters errorSearchMessage">Unfortunately there was no Pokemon found for your search, please try again.<br>(Look for at least 3 letters...)</h3>
     `;
+    document.getElementById('loadingCircle').style.display = 'none';
     document.getElementById('moreButton').style.display = 'none';
 }
 
@@ -652,7 +654,9 @@ async function displayFilteredPokemon(filteredPokemon) {
         if (!document.getElementById(name)) {
             const pokemonData = await fetchPokemonData(name);
             if (!pokemonData) continue;
-            fragment.appendChild(createPokemonCard(name, pokemonData));
+            if (!document.getElementById(`${name}`)) {
+            fragment.appendChild(createPokemonCard(name, pokemonData))
+            }
         }
     }
 

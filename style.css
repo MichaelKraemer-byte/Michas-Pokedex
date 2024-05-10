@@ -205,9 +205,18 @@ h2 {
     display: block;
 }
 
+.j-center {
+    display: flex;
+    justify-content: center;
+}
+
 /* CSS TOOLS */
 /* CSS TOOLS */
 /* CSS TOOLS */
+
+.errorSearchMessage {
+    text-align: center;
+}
 
 .form-control:focus {
     box-shadow: none !important;

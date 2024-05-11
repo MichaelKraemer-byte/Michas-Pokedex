@@ -28,9 +28,7 @@ function includeHTML() {
 
 
 let pokeAmount = "20";
-
 let BASE_URL = `https://pokeapi.co/api/v2/pokemon`;
-
 let listedPokemon = [];
 
 
@@ -67,6 +65,7 @@ async function changePokemon(direction) {
 
     showContainer.innerHTML = renderPokemonDetailsForNextOrBack(POKE_ResponseToJson);
 }
+
 
 function renderPokemonDetailsForNextOrBack(POKE_ResponseToJson) {
     return /*html*/`
@@ -162,7 +161,7 @@ function renderPokemonDetailsForNextOrBack(POKE_ResponseToJson) {
                     </div>
                     <div class="cardFooter whiteLetters">
                         <div>
-                            <button class="soundButton" onclick="playSound('${currentPokemon.cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                            <button class="soundButton" onclick="playSound(event, '${currentPokemon.cries}')"><img class="soundPNG" src="img/sound.png"></button>
                         </div>
                         <p class="pokeWeight">Weight: <b> ${currentPokemon.weight} kg</b></p>
                     </div>
@@ -216,7 +215,21 @@ async function renderPokemon(BASE_ResponseToJson) {
         pokemonCard.onclick = function() {
             showPokemon(pokemon[pokeIndex - 1]['name'], POKE_ResponseToJson, abilities, types, cries, pokeWeight);
         };
-        pokemonCard.innerHTML = /*html*/`
+        pokemonCard.innerHTML = pokemonCardHTML(pokemon, pokeIndex, POKE_ResponseToJson, abilities, types, cries, pokeWeight);
+        // wir erstellen lauter pokemonCard die dann immer einzeln
+        // dem fragment hinzugefuegt werden:
+        
+        fragment.appendChild(pokemonCard); // hinzufeugen der pokemonCard zum Fragment.
+    }
+    document.getElementById('loadingCircle').style.display='none';
+    // zum Schluss fuegen wir das grosse aufgebaute Fragment zum DOM-Baum hinzu:
+    content.appendChild(fragment); 
+    document.getElementById('moreButton').style.display='block';
+}
+
+
+function pokemonCardHTML(pokemon, pokeIndex, POKE_ResponseToJson, abilities, types, cries, pokeWeight){
+    return /*html*/`
             <div class="titleContainer">
                 <h2 class="capitalize whiteLetters">${pokemon[pokeIndex - 1]['name']}</h2>
                 <h2 class="whiteLetters mobile-d-none">#${POKE_ResponseToJson['id']}</h2>
@@ -237,20 +250,11 @@ async function renderPokemon(BASE_ResponseToJson) {
             </div>
             <div class="mobile-d-none cardFooter whiteLetters">
                 <div>
-                    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                    <button class="soundButton" onclick="playSound(event, '${cries}')"><img class="soundPNG" src="img/sound.png"></button>
                 </div>
                 <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
             </div>
         `;
-        // wir erstellen lauter pokemonCard die dann immer einzeln
-        // dem fragment hinzugefuegt werden:
-        
-        fragment.appendChild(pokemonCard); // hinzufeugen der pokemonCard zum Fragment.
-    }
-    document.getElementById('loadingCircle').style.display='none';
-    // zum Schluss fuegen wir das grosse aufgebaute Fragment zum DOM-Baum hinzu:
-    content.appendChild(fragment); 
-    document.getElementById('moreButton').style.display='block';
 }
 
 
@@ -298,7 +302,12 @@ function renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types
         weight: weight
     };
 
-    showContainer.innerHTML = /*html*/`
+    showContainer.innerHTML = pokemonDetailsHTML(pokemonName, POKE_ResponseToJson, types, statPercentages);
+}
+
+
+function pokemonDetailsHTML(pokemonName, POKE_ResponseToJson, types, statPercentages) {
+    return /*html*/`
     <div class="${types[0]} cardShow "> 
         <div class="titleContainer space-between">
             <h2 class="capitalize showH2">${pokemonName}</h2>
@@ -331,7 +340,7 @@ function renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types
                         </div>
                     </div>
                 </div>
-                <!-- More stat bars -->
+
                 <button onclick="secondStatsPage('${currentPokemon['name']}')" class="arrowButton">
                     <div class="halfCircle"></div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24">
@@ -387,7 +396,7 @@ function renderPokemonDetails(pokemonName, POKE_ResponseToJson, abilities, types
                 </div>
                 <div class="cardFooter whiteLetters">
                     <div>
-                        <button class="soundButton" onclick="playSound('${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
+                        <button class="soundButton" onclick="playSound(event,'${currentPokemon['cries']}')"><img class="soundPNG" src="img/sound.png"></button>
                     </div>
                     <p class="pokeWeight">Weight: <b> ${currentPokemon['weight']} kg</b></p>
                 </div>
@@ -516,6 +525,7 @@ async function morePokemon() {
     document.getElementById('moreButton').style.display = 'block';
 }
 
+
 async function renderNewPokemon(pokemonNames) {
     let content = document.getElementById('content');
     let fragment = document.createDocumentFragment();
@@ -534,6 +544,7 @@ async function renderNewPokemon(pokemonNames) {
     // Füge das Fragment zum Content-Bereich hinzu
     content.appendChild(fragment);
 }
+
 
 function createPokemonCard(pokemonName, pokemonData) {
     let abilities = pokemonData['abilities'].map(ability => ability.ability.name);
@@ -564,7 +575,7 @@ function createPokemonCard(pokemonName, pokemonData) {
             </div>
             <div class="cardFooter whiteLetters">
                 <div>
-                    <button class="soundButton" onclick="playSound('${cries}')"><img class="soundPNG" src="img/sound.png"></button>
+                    <button class="soundButton" onclick="playSound(event,'${cries}')"><img class="soundPNG" src="img/sound.png"></button>
                 </div>
                 <p class="pokeWeight">Weight: <b> ${pokeWeight} kg</b></p>
             </div>
@@ -575,8 +586,10 @@ function createPokemonCard(pokemonName, pokemonData) {
 }
 
 
-function playSound(soundURL) {
+function playSound(event, soundURL) {
+    event.stopPropagation();
     let AUDIO = new Audio(soundURL);
+    AUDIO.volume = 0.09;
     AUDIO.play();
 }
 
@@ -630,12 +643,14 @@ async function filterPokemon() {
     document.getElementById('moreButton').style.display = 'none';
 }
 
+
 async function fetchFilteredPokemon(search) {
     const searchResponse = await fetch(`${BASE_URL}?limit=1025&offset=0`);
     const searchData = await searchResponse.json();
     const allPokemonData = searchData.results.map(pokemon => pokemon.name);
     return allPokemonData.filter(name => name.includes(search)).slice(0, 10);
 }
+
 
 function displayNoResultsMessage() {
     const content = document.getElementById('content');
@@ -645,6 +660,7 @@ function displayNoResultsMessage() {
     document.getElementById('loadingCircle').style.display = 'none';
     document.getElementById('moreButton').style.display = 'none';
 }
+
 
 async function displayFilteredPokemon(filteredPokemon) {
     const content = document.getElementById('content');
@@ -662,6 +678,7 @@ async function displayFilteredPokemon(filteredPokemon) {
 
     content.appendChild(fragment);
 }
+
 
 async function fetchPokemonData(name) {
     try {
